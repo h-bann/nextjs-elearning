@@ -22,9 +22,12 @@ export async function POST(req) {
     const existingUser = await mySQL(checkExistingUser, [email]);
     console.log(existingUser);
     if (existingUser.length > 0) {
-      return new Response(JSON.stringify({ message: "User already exists" }), {
-        status: 400,
-      });
+      return Response(
+        { message: "User already exists" },
+        {
+          status: 400,
+        }
+      );
     }
 
     // Hash password
@@ -63,8 +66,11 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error("Signup error:", error);
-    return new Response(JSON.stringify({ message: "Internal server error" }), {
-      status: 500,
-    });
+    return Response(
+      { message: "Internal server error" },
+      {
+        status: 500,
+      }
+    );
   }
 }

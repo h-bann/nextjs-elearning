@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const SignUpForm = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +63,7 @@ const SignUpForm = () => {
       }
 
       // Redirect to dashboard on success
-      // window.location.href = "/dashboard";
+      router.push("/");
     } catch (err) {
       setError(err.message);
     } finally {

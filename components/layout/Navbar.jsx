@@ -1,16 +1,23 @@
 "use client";
 import React, { useState } from "react";
-import { Menu, X, User, LogIn } from "lucide-react";
+import { Menu, X, User, LogIn, LogOut } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const { user, signout } = useAuth();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  const router = useRouter();
 
-  // Mock auth state (replace with actual auth logic)
-  const isAuthenticated = false;
+  const handleSignOut = async () => {
+    const result = await signout();
+    if (result.success) {
+      router.push("/");
+    }
+  };
 
   const menuItems = [
     { label: "Home", href: "/" },
@@ -18,6 +25,11 @@ const Navbar = () => {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ];
+
+  // If user is logged in, add dashboard to menu items
+  if (user) {
+    menuItems.push({ label: "Dashboard", href: "/dashboard" });
+  }
 
   return (
     <nav className="bg-white shadow-md fixed w-full top-0 z-50">
@@ -47,14 +59,19 @@ const Navbar = () => {
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-4">
-              {isAuthenticated ? (
-                <a
-                  href="/dashboard"
-                  className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
-                >
-                  <User size={20} />
-                  <span>Dashboard</span>
-                </a>
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-gray-600">
+                    Welcome, {user.username}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
+                  >
+                    <LogOut size={20} />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
               ) : (
                 <>
                   <a
@@ -100,15 +117,19 @@ const Navbar = () => {
 
             {/* Mobile Auth Buttons */}
             <div className="border-t border-gray-200 pt-4 space-y-4">
-              {isAuthenticated ? (
-                <a
-                  href="/dashboard"
-                  className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <User size={20} />
-                  <span>Dashboard</span>
-                </a>
+              {user ? (
+                <>
+                  <span className="block text-gray-600">
+                    Welcome, {user.name}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
+                  >
+                    <LogOut size={20} />
+                    <span>Sign Out</span>
+                  </button>
+                </>
               ) : (
                 <>
                   <a

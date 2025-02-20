@@ -53,7 +53,7 @@ export default function ProfileForm({ user }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 mt-6">
       {message && (
         <div
           className={`p-4 rounded-md ${

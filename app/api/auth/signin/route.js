@@ -22,7 +22,7 @@ export async function POST(req) {
     const user = users[0];
     console.log(user);
     if (!user) {
-      return Response(
+      return Response.json(
         { message: "Invalid credentials" },
         {
           status: 401,
@@ -34,7 +34,7 @@ export async function POST(req) {
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return Response(
+      return Response.json(
         { message: "Invalid credentials" },
         {
           status: 401,
@@ -77,7 +77,7 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error("Sign in error:", error);
-    return Response(
+    return Response.json(
       { message: "Internal server error" },
       {
         status: 500,

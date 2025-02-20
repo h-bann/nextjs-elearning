@@ -22,7 +22,7 @@ export async function POST(req) {
     const existingUser = await mySQL(checkExistingUser, [email]);
     console.log(existingUser);
     if (existingUser.length > 0) {
-      return Response(
+      return Response.json(
         { message: "User already exists" },
         {
           status: 400,
@@ -66,7 +66,7 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error("Signup error:", error);
-    return Response(
+    return Response.json(
       { message: "Internal server error" },
       {
         status: 500,

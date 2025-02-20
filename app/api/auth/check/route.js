@@ -11,7 +11,7 @@ export async function GET(req) {
     // If no token exists, return a 200 with null user
     // This is not an error state, just means no one is logged in
     if (!token) {
-      return new Response(JSON.stringify({ user: null }), { status: 200 });
+      return Response.json({ user: null }, { status: 200 });
     }
 
     // Verify the token
@@ -22,29 +22,41 @@ export async function GET(req) {
     const user = users[0];
 
     if (!user) {
-      return new Response(JSON.stringify({ message: "User not found" }), {
-        status: 401,
-      });
+      return Response.json(
+        { message: "User not found" },
+        {
+          status: 401,
+        }
+      );
     }
 
-    return new Response(JSON.stringify({ user }), { status: 200 });
+    return Response.json({ user }, { status: 200 });
   } catch (error) {
     // Handle different types of errors
     if (error instanceof jwt.JsonWebTokenError) {
-      return new Response(JSON.stringify({ message: "Invalid token" }), {
-        status: 401,
-      });
+      return Response.json(
+        { message: "Invalid token" },
+        {
+          status: 401,
+        }
+      );
     }
 
     if (error instanceof jwt.TokenExpiredError) {
-      return new Response(JSON.stringify({ message: "Token expired" }), {
-        status: 401,
-      });
+      return Response.json(
+        { message: "Token expired" },
+        {
+          status: 401,
+        }
+      );
     }
 
     console.error("Auth check error:", error);
-    return new Response(JSON.stringify({ message: "Internal server error" }), {
-      status: 500,
-    });
+    return Response.json(
+      { message: "Internal server error" },
+      {
+        status: 500,
+      }
+    );
   }
 }

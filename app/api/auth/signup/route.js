@@ -35,7 +35,7 @@ export async function POST(req) {
 
     // Create user
     const userId = uuidv4();
-    await mySQL(createUser, [userId, username, email, hashedPassword]);
+    await mySQL(createUser, [userId, "user", username, email, hashedPassword]);
 
     // Create JWT token
     const token = jwt.sign({ userId, email }, process.env.JWT_SECRET, {

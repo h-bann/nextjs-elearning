@@ -22,7 +22,7 @@ export default function DashboardPage() {
   return (
     <>
       {/* This will only render for students */}
-      <ProtectedRoute allowedRoles={["student"]}>
+      <ProtectedRoute allowedRoles={["user"]}>
         <StudentDashboard stats={mockStats.student} />
       </ProtectedRoute>
 

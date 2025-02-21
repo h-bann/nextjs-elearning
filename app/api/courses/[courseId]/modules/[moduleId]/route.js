@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
 import { checkInstructor, deleteModule, getLoggedInUser } from "@/lib/queries";
 
+// ! DELETE MODULES ROUTE
 export async function DELETE(req, { params }) {
   const { courseId } = await params;
   try {

@@ -12,7 +12,9 @@ export default function LessonManager({
   const [lessons, setLessons] = useState(initialLessons);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newLessonTitle, setNewLessonTitle] = useState("");
+  console.log(lessons);
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -41,7 +43,10 @@ export default function LessonManager({
     }
   };
 
-  const handleAddLesson = async () => {
+  const handleAddLesson = async (e) => {
+    e.preventDefault();
+    if (!newLessonTitle.trim()) return;
+
     setLoading(true);
     setError("");
 
@@ -52,10 +57,8 @@ export default function LessonManager({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title: "New Lesson",
-            type: "TEXT",
-            content: "",
-            order_index: lessons.length,
+            title: newLessonTitle,
+            order_index: lessons.length + 1,
           }),
         }
       );
@@ -89,8 +92,8 @@ export default function LessonManager({
   };
 
   return (
-    <div className="mt-4">
-      {error && <div className="mb-4 text-sm text-red-600">{error}</div>}
+    <div className="mt-4 space-y-4">
+      {error && <div className="text-sm text-red-600">{error}</div>}
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId={`lessons-${moduleId}`}>
@@ -110,37 +113,20 @@ export default function LessonManager({
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className="bg-gray-50 rounded-md p-3"
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <span {...provided.dragHandleProps}>
-                            <Grip className="w-4 h-4 text-gray-400" />
-                          </span>
-                          {lesson.type === "VIDEO" ? (
-                            <Video className="w-4 h-4 text-blue-500" />
-                          ) : (
-                            <FileText className="w-4 h-4 text-green-500" />
-                          )}
-                          <span>{lesson.title}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => handleDeleteLesson(lesson.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              /* TODO: Add edit functionality */
-                            }}
-                            className="text-blue-500 hover:text-blue-700"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                        </div>
+                      <div className="flex items-center space-x-3">
+                        <span {...provided.dragHandleProps}>
+                          <Grip className="w-4 h-4 text-gray-400" />
+                        </span>
+                        <span>{lesson.title}</span>
                       </div>
+                      <button
+                        onClick={() => handleDeleteLesson(lesson.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
                     </div>
                   )}
                 </Draggable>
@@ -151,14 +137,54 @@ export default function LessonManager({
         </Droppable>
       </DragDropContext>
 
-      <button
-        onClick={handleAddLesson}
-        disabled={loading}
-        className="mt-4 flex items-center text-sm text-blue-600 hover:text-blue-800"
-      >
-        <Plus className="w-4 h-4 mr-1" />
-        Add Lesson
-      </button>
+      {isModalOpen ? (
+        <form onSubmit={handleAddLesson} className="space-y-4">
+          <div>
+            <label
+              htmlFor="lessonTitle"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Lesson Title
+            </label>
+            <input
+              id="lessonTitle"
+              type="text"
+              value={newLessonTitle}
+              onChange={(e) => setNewLessonTitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter lesson title"
+              required
+            />
+          </div>
+          <div className="flex justify-end space-x-2">
+            <button
+              type="button"
+              onClick={() => {
+                setIsModalOpen(false);
+                setNewLessonTitle("");
+              }}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              {loading ? "Adding..." : "Add Lesson"}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center text-sm text-blue-600 hover:text-blue-800"
+        >
+          <Plus className="w-4 h-4 mr-1" />
+          Add Lesson
+        </button>
+      )}
     </div>
   );
 }

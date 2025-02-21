@@ -1,12 +1,11 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 import mySQL from "@/lib/database";
-import { checkInstructor, getLoggedInUser, insertModules } from "@/lib/queries";
+import { checkInstructor, getLoggedInUser, insertLessons } from "@/lib/queries";
 
-// ! ADD MODULES ROUTE
 export async function POST(req, { params }) {
-  const { courseId } = await params;
-
+  const { courseId, moduleId } = await params;
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
@@ -27,15 +26,20 @@ export async function POST(req, { params }) {
       return Response.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    await mySQL(insertModules, [courseId, title, order_index]);
+    // Generate a new lesson ID
+    // const lessonId = uuidv4();
 
+    // Insert the lesson
+    await mySQL(insertLessons, [moduleId, title, order_index]);
+
+    // Return the complete lesson object
     return Response.json({
-      course_id: courseId,
+      module_id: moduleId,
       title,
       order_index,
     });
   } catch (error) {
-    console.error("Module creation error:", error);
+    console.error("Lesson creation error:", error);
     return Response.json({ message: "Internal server error" }, { status: 500 });
   }
 }

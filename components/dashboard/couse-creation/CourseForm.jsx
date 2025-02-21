@@ -69,7 +69,7 @@ export default function CourseForm({ instructorId }) {
 
       const data = await response.json();
       console.log(data);
-      //   router.push(`/dashboard/courses/${data.courseId}/edit`);
+      router.push(`/dashboard/courses/${data.courseId}/edit`);
     } catch (err) {
       setError(err.message);
     } finally {

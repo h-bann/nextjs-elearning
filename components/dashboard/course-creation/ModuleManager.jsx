@@ -63,7 +63,7 @@ export default function ModuleManager({ courseId, initialModules }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: newModuleTitle,
-          order_index: modules.length,
+          order_index: modules.length + 1,
         }),
       });
 
@@ -99,7 +99,7 @@ export default function ModuleManager({ courseId, initialModules }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow text-black">
       {error && (
         <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-md">
           {error}

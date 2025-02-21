@@ -6,6 +6,7 @@ import { checkInstructor, getLoggedInUser, insertLessons } from "@/lib/queries";
 
 export async function POST(req, { params }) {
   const { courseId, moduleId } = await params;
+  console.log(moduleId);
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;

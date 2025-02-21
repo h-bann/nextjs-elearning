@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Grip, Plus, Video, FileText, Trash, Edit } from "lucide-react";
+import LessonContentEditor from "./LessonContentEditor";
 
 export default function LessonManager({
   courseId,
@@ -14,7 +15,8 @@ export default function LessonManager({
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLessonTitle, setNewLessonTitle] = useState("");
-  console.log(lessons);
+  const [editingLesson, setEditingLesson] = useState(null);
+
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -57,6 +59,7 @@ export default function LessonManager({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            moduleId: moduleId,
             title: newLessonTitle,
             order_index: lessons.length + 1,
           }),
@@ -94,7 +97,6 @@ export default function LessonManager({
   return (
     <div className="mt-4 space-y-4">
       {error && <div className="text-sm text-red-600">{error}</div>}
-
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId={`lessons-${moduleId}`}>
           {(provided) => (
@@ -121,12 +123,20 @@ export default function LessonManager({
                         </span>
                         <span>{lesson.title}</span>
                       </div>
-                      <button
-                        onClick={() => handleDeleteLesson(lesson.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => setEditingLesson(lesson)}
+                          className="text-blue-500 hover:text-blue-700"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteLesson(lesson.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   )}
                 </Draggable>
@@ -137,6 +147,38 @@ export default function LessonManager({
         </Droppable>
       </DragDropContext>
 
+      {editingLesson && (
+        <LessonContentEditor
+          lesson={editingLesson}
+          onSave={async (content) => {
+            try {
+              const response = await fetch(
+                `/api/courses/${courseId}/modules/${moduleId}/lessons/${editingLesson.id}`,
+                {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(content),
+                }
+              );
+
+              if (!response.ok) throw new Error("Failed to update lesson");
+
+              // Update local state
+              setLessons(
+                lessons.map((lesson) =>
+                  lesson.id === editingLesson.id
+                    ? { ...lesson, ...content }
+                    : lesson
+                )
+              );
+              setEditingLesson(null);
+            } catch (error) {
+              setError("Failed to update lesson");
+            }
+          }}
+          onClose={() => setEditingLesson(null)}
+        />
+      )}
       {isModalOpen ? (
         <form onSubmit={handleAddLesson} className="space-y-4">
           <div>

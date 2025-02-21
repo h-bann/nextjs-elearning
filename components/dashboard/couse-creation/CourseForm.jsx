@@ -35,31 +35,30 @@ export default function CourseForm({ instructorId }) {
     setError("");
 
     try {
-      // First upload image if exists
-      //   let imageUrl = null;
-      //   if (imageFile) {
-      //     const formData = new FormData();
-      //     formData.append("image", imageFile);
+      //   First upload image if exists
+      let imageUrl = null;
+      if (imageFile) {
+        const imageFormData = new FormData();
+        imageFormData.append("image", imageFile);
+        imageFormData.append("title", formData.title);
+        const imageResponse = await fetch("/api/courses/image-upload", {
+          method: "POST",
+          body: imageFormData,
+        });
 
-      //     const imageResponse = await fetch("/api/upload", {
-      //       method: "POST",
-      //       body: formData,
-      //     });
-
-      //     if (!imageResponse.ok) throw new Error("Failed to upload image");
-      //     const imageData = await imageResponse.json();
-      //     imageUrl = imageData.url;
-      //   }
-
+        if (!imageResponse.ok) throw new Error("Failed to upload image");
+        const { url } = await imageResponse.json();
+        imageUrl = url;
+      }
       // Create course
-      const response = await fetch("/api/courses", {
+      const response = await fetch("/api/courses/course-creation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
-          //   imageUrl,
+          imageUrl,
           instructorId,
         }),
       });
@@ -69,7 +68,8 @@ export default function CourseForm({ instructorId }) {
       }
 
       const data = await response.json();
-      router.push(`/dashboard/courses/${data.courseId}/edit`);
+      console.log(data);
+      //   router.push(`/dashboard/courses/${data.courseId}/edit`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -86,7 +86,7 @@ export default function CourseForm({ instructorId }) {
       )}
 
       {/* Image Upload */}
-      {/* <div className="mb-6">
+      <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Course Thumbnail
         </label>
@@ -118,7 +118,7 @@ export default function CourseForm({ instructorId }) {
             <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
           </div>
         </div>
-      </div> */}
+      </div>
 
       {/* Basic Info */}
       <div className="grid grid-cols-1 gap-6">

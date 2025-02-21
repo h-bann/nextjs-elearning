@@ -20,7 +20,6 @@ async function getUser() {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const users = await mySQL(getLoggedInUser, [decoded.userId]);
-
     return users[0];
   } catch (error) {
     redirect("/auth/signin");
@@ -39,7 +38,7 @@ async function getEnrolledCourses(userId) {
 
 export default async function CoursesPage() {
   const user = await getUser();
-
+  console.log(user);
   if (user.role === "instructor") {
     const courses = await getInstructorCourses(user.id);
     return <InstructorCourseList courses={courses} />;

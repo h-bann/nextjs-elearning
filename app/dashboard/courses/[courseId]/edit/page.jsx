@@ -2,8 +2,13 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import mySQL from "@/lib/database";
-import ModuleManager from "@/components/dashboard/couse-creation/ModuleManager";
-import { getCourse, getLoggedInUser, getModules } from "@/lib/queries";
+import ModuleManager from "@/components/dashboard/course-creation/ModuleManager";
+import {
+  getCourse,
+  getLessons,
+  getLoggedInUser,
+  getModules,
+} from "@/lib/queries";
 
 async function getCourseAndModules(courseId) {
   const course = await mySQL(getCourse, [courseId]);
@@ -14,9 +19,16 @@ async function getCourseAndModules(courseId) {
 
   const modules = await mySQL(getModules, [courseId]);
 
+  const modulesWithLessons = await Promise.all(
+    modules.map(async (module) => {
+      const lessons = await mySQL(getLessons, [module.id]);
+      return { ...module, lessons };
+    })
+  );
+
   return {
     course: course[0],
-    modules,
+    modules: modulesWithLessons,
   };
 }
 
@@ -34,7 +46,7 @@ export default async function CourseEditPage({ params }) {
   const user = users[0];
 
   const courseData = await getCourseAndModules(courseId);
-  // console.log(courseData);
+  console.log(courseData);
   if (!courseData || courseData.course.instructor_id !== user.id) {
     redirect("/dashboard/courses");
   }

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import mySQL from "@/lib/database";
 import { getLoggedInUser } from "@/lib/queries";
-import CourseForm from "@/components/dashboard/couse-creation/CourseForm";
+import CourseForm from "@/components/dashboard/course-creation/CourseForm";
 
 async function getUser() {
   const cookieStore = await cookies();

@@ -6,10 +6,10 @@ const nextConfig = {
       //   source: "/sitemap.xml",
       //   destination: "/api/sitemap",
       // },
-      {
-        source: "/api/:path*",
-        destination: process.env.NEXT_PUBLIC_API_URL + "/api/:path*",
-      },
+      // {
+      //   source: "/api/:path*",
+      //   destination: process.env.NEXT_PUBLIC_API_URL + "/api/:path*",
+      // },
     ];
   },
 };

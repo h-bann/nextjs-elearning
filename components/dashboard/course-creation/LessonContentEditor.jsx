@@ -2,37 +2,61 @@
 
 import { useState } from "react";
 import { X, Image as ImageIcon, Plus } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 
-export default function LessonContentEditor({ lesson, onSave, onClose }) {
+export default function LessonContentEditor({
+  lesson,
+  courseName,
+  moduleId,
+  onSave,
+  onClose,
+}) {
   const [content, setContent] = useState({
     text: lesson.content || "",
     images: lesson.images || [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
-  const handleImageUpload = async (e) => {
+  //   const handleImageUpload = async (e) => {
+  //     const file = e.target.files[0];
+  //     if (!file) return;
+
+  //     const formData = new FormData();
+  //     formData.append("image", file);
+  //     formData.append("title", lesson.title);
+  //     formData.append("courseName", courseName);
+  //     formData.append("moduleId", moduleId);
+
+  //     try {
+  //       const response = await fetch("/api/courses/image-upload", {
+  //         method: "POST",
+  //         body: formData,
+  //       });
+
+  //       if (!response.ok) throw new Error("Failed to upload image");
+
+  //       const data = await response.json();
+  //       setContent((prev) => ({
+  //         ...prev,
+  //         images: [...prev.images, data.url],
+  //       }));
+  //     } catch (err) {
+  //       setError("Failed to upload image");
+  //     }
+  //   };
+
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const response = await fetch("/api/image-upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Failed to upload image");
-
-      const data = await response.json();
-      setContent((prev) => ({
-        ...prev,
-        images: [...prev.images, data.url],
-      }));
-    } catch (err) {
-      setError("Failed to upload image");
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -42,10 +66,33 @@ export default function LessonContentEditor({ lesson, onSave, onClose }) {
     setError("");
 
     try {
+      let imageUrl = null;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        formData.append("title", lesson.title);
+        formData.append("courseName", courseName);
+        formData.append("moduleId", moduleId);
+
+        const imageResponse = await fetch("/api/courses/image-upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!imageResponse.ok) throw new Error("Failed to upload image");
+        const { url } = await imageResponse.json();
+        imageUrl = url;
+      }
+
+      setContent((prev) => ({
+        ...prev,
+        images: [...prev.images, imageUrl],
+      }));
+
       await onSave(content);
       onClose();
     } catch (err) {
-      setError("Failed to save lesson content");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -84,12 +131,12 @@ export default function LessonContentEditor({ lesson, onSave, onClose }) {
               />
             </div>
 
-            <div>
+            <div className="mt-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Images
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                {content.images.map((image, index) => (
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                {/* {content.images.map((image, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={image}
@@ -109,8 +156,35 @@ export default function LessonContentEditor({ lesson, onSave, onClose }) {
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                ))}
-                <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-blue-500">
+                ))} */}
+                <div className=" text-center flex">
+                  <div className="flex flex-col text-sm text-gray-600">
+                    <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-blue-500">
+                      <span className="p-1">
+                        Upload a file or drag and drop
+                      </span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
+                  </div>
+                  {imagePreview && (
+                    <div className="ml-5">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="mx-auto h-32 w-auto"
+                      />
+                    </div>
+                  )}
+                </div>
+                {/* <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded cursor-pointer hover:border-blue-500">
                   <input
                     type="file"
                     accept="image/*"
@@ -123,7 +197,7 @@ export default function LessonContentEditor({ lesson, onSave, onClose }) {
                       Add Image
                     </span>
                   </div>
-                </label>
+                </label> */}
               </div>
             </div>
           </div>

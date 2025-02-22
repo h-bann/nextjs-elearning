@@ -5,7 +5,11 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Grip, Plus, ChevronDown, ChevronUp, Trash, Edit } from "lucide-react";
 import LessonManager from "./LessonManager";
 
-export default function ModuleManager({ courseId, initialModules }) {
+export default function ModuleManager({
+  courseId,
+  courseName,
+  initialModules,
+}) {
   const router = useRouter();
   const [modules, setModules] = useState(initialModules);
   const [expandedModules, setExpandedModules] = useState({});
@@ -159,6 +163,7 @@ export default function ModuleManager({ courseId, initialModules }) {
                         <div className="mt-4 pl-9">
                           <LessonManager
                             courseId={courseId}
+                            courseName={courseName}
                             moduleId={module.id}
                             initialLessons={module.lessons || []}
                           />

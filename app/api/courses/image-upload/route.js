@@ -5,6 +5,7 @@ import { getLoggedInUser } from "@/lib/queries";
 import { uploadToS3 } from "@/lib/imageUpload";
 import sharp from "sharp";
 
+// ! IMAGE UPLOAD ROUTE
 export async function POST(req) {
   try {
     // Verify authentication
@@ -21,7 +22,9 @@ export async function POST(req) {
     // Get the form data
     const formData = await req.formData();
     const file = formData.get("image");
-    const title = formData.get("title");
+    const lessonTitle = formData.get("title");
+    const courseName = formData.get("courseName");
+    const moduleId = formData.get("moduleId");
 
     if (!file) {
       return Response.json({ message: "No file provided" }, { status: 400 });
@@ -38,7 +41,7 @@ export async function POST(req) {
       return Response.json({ message: "File too large" }, { status: 400 });
     }
     const bucketName = process.env.DO_SPACES_NAME;
-    const folderPath = `courses/${title}`;
+    const folderPath = `courses/${courseName}`;
 
     const buffer = await file.arrayBuffer();
     const optimisedBuffer = await sharp(Buffer.from(buffer))
@@ -46,7 +49,7 @@ export async function POST(req) {
       .webp({ quality: 100 })
       .toBuffer();
 
-    const fileKey = `${folderPath}/courseDisplayImage.webp`;
+    const fileKey = `${folderPath}/${moduleId}-${lessonTitle}.webp`;
     const fileUrl = await uploadToS3(optimisedBuffer, fileKey, bucketName);
 
     // Return the URL for the uploaded image

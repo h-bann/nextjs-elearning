@@ -2,12 +2,14 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
 import {
+  addContent,
   checkInstructor,
   deleteLesson,
   getLoggedInUser,
   updateContent,
 } from "@/lib/queries";
 
+// ! ADD CONTENT TO EACH LESSON ROUTE
 export async function PUT(req, { params }) {
   const { courseId, moduleId, lessonId } = await params;
   try {
@@ -32,7 +34,7 @@ export async function PUT(req, { params }) {
     const { contentType, text, images } = await req.json();
 
     // Update lesson content
-    await mySQL(updateContent, [lessonId, contentType, text]);
+    await mySQL(addContent, [lessonId, contentType, text]);
 
     return Response.json({ message: "Lesson updated successfully" });
   } catch (error) {

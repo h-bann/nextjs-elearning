@@ -7,6 +7,7 @@ import LessonContentEditor from "./LessonContentEditor";
 
 export default function LessonManager({
   courseId,
+  courseName,
   moduleId,
   initialLessons = [],
 }) {
@@ -149,6 +150,8 @@ export default function LessonManager({
 
       {editingLesson && (
         <LessonContentEditor
+          courseName={courseName}
+          moduleId={moduleId}
           lesson={editingLesson}
           onSave={async (content) => {
             try {
@@ -179,6 +182,7 @@ export default function LessonManager({
           onClose={() => setEditingLesson(null)}
         />
       )}
+
       {isModalOpen ? (
         <form onSubmit={handleAddLesson} className="space-y-4">
           <div>

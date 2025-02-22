@@ -60,6 +60,7 @@ export default async function CourseEditPage({ params }) {
 
       <ModuleManager
         courseId={courseId}
+        courseName={courseData.course.title}
         initialModules={courseData.modules || []}
       />
     </div>

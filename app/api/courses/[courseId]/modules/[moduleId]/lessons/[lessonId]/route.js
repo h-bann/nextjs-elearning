@@ -12,6 +12,7 @@ import {
 // ! ADD CONTENT TO EACH LESSON ROUTE
 export async function PUT(req, { params }) {
   const { courseId, moduleId, lessonId } = await params;
+
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
@@ -31,10 +32,14 @@ export async function PUT(req, { params }) {
       return Response.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { contentType, text, images } = await req.json();
+    const { text, image } = await req.json();
+    console.log(text, image);
 
     // Update lesson content
-    await mySQL(addContent, [lessonId, contentType, text]);
+    await mySQL(addContent, [lessonId, text.type, text.value]);
+    if (image) {
+      await mySQL(addContent, [lessonId, image.type, image.value]);
+    }
 
     return Response.json({ message: "Lesson updated successfully" });
   } catch (error) {

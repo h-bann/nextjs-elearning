@@ -11,10 +11,10 @@ export default function LessonContentEditor({
   onSave,
   onClose,
 }) {
-  const [content, setContent] = useState({
-    text: lesson.content || "",
-    images: lesson.images || [],
-  });
+  //   const [content, setContent] = useState({
+  //     text: { value: lesson.content || "", type: "text" },
+  //   });
+  const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -47,7 +47,7 @@ export default function LessonContentEditor({
   //       setError("Failed to upload image");
   //     }
   //   };
-
+  console.log(content);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -67,6 +67,7 @@ export default function LessonContentEditor({
 
     try {
       let imageUrl = null;
+      let updatedContent = "";
       if (imageFile) {
         const formData = new FormData();
         formData.append("image", imageFile);
@@ -82,14 +83,18 @@ export default function LessonContentEditor({
         if (!imageResponse.ok) throw new Error("Failed to upload image");
         const { url } = await imageResponse.json();
         imageUrl = url;
+
+        updatedContent = {
+          ...content,
+          image: { type: "image", value: imageUrl },
+        };
+      }
+      if (!imageFile) {
+        updatedContent = { ...content };
       }
 
-      setContent((prev) => ({
-        ...prev,
-        images: [...prev.images, imageUrl],
-      }));
-
-      await onSave(content);
+      console.log(updatedContent);
+      await onSave(updatedContent);
       onClose();
     } catch (err) {
       setError(err.message);
@@ -121,9 +126,16 @@ export default function LessonContentEditor({
                 Lesson Content
               </label>
               <textarea
-                value={content.text}
+                value={content.text?.value || ""}
                 onChange={(e) =>
-                  setContent((prev) => ({ ...prev, text: e.target.value }))
+                  setContent((prev) => ({
+                    ...prev,
+                    text: {
+                      ...prev.text,
+                      type: "text",
+                      value: e.target.value,
+                    },
+                  }))
                 }
                 rows={10}
                 className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"

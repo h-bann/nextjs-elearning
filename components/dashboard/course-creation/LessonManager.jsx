@@ -17,7 +17,7 @@ export default function LessonManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLessonTitle, setNewLessonTitle] = useState("");
   const [editingLesson, setEditingLesson] = useState(null);
-
+  console.log(editingLesson);
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 

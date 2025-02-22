@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import mySQL from "@/lib/database";
 import ModuleManager from "@/components/dashboard/course-creation/ModuleManager";
 import {
+  getContent,
   getCourse,
   getLessons,
   getLoggedInUser,
@@ -13,21 +14,29 @@ import {
 async function getCourseAndModules(courseId) {
   const course = await mySQL(getCourse, [courseId]);
 
-  if (!course.length) {
-    return null;
-  }
-
+  // if (!course.length) {
+  //   return null;
+  // }
   const modules = await mySQL(getModules, [courseId]);
-
   const modulesWithLessons = await Promise.all(
     modules.map(async (module) => {
       const lessons = await mySQL(getLessons, [module.id]);
-      return { ...module, lessons };
+      const lessonsWithContent = await Promise.all(
+        lessons.map(async (lesson) => {
+          const content = await mySQL(getContent, [lesson.id]);
+
+          return {
+            ...lesson,
+            content: content,
+          };
+        })
+      );
+
+      return { ...module, lessons: lessonsWithContent };
     })
   );
-
   return {
-    course: course[0],
+    ...course[0],
     modules: modulesWithLessons,
   };
 }
@@ -47,20 +56,20 @@ export default async function CourseEditPage({ params }) {
 
   const courseData = await getCourseAndModules(courseId);
   console.log(courseData);
-  if (!courseData || courseData.course.instructor_id !== user.id) {
+  if (!courseData || courseData.instructor_id !== user.id) {
     redirect("/dashboard/courses");
   }
 
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">{courseData.course.title}</h1>
+        <h1 className="text-2xl font-bold">{courseData.title}</h1>
         <p className="text-gray-600">Manage your course content</p>
       </div>
 
       <ModuleManager
         courseId={courseId}
-        courseName={courseData.course.title}
+        courseName={courseData.title}
         initialModules={courseData.modules || []}
       />
     </div>

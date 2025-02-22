@@ -22,8 +22,8 @@ export async function POST(req) {
     // Get the form data
     const formData = await req.formData();
     const file = formData.get("image");
-    const lessonTitle = formData.get("title");
-    const courseName = formData.get("courseName");
+    const lessonTitle = formData.get("title").replace(/\s+/g, "_");
+    const courseName = formData.get("courseName").replace(/\s+/g, "_");
     const moduleId = formData.get("moduleId");
 
     if (!file) {

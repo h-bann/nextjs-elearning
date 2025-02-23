@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import mySQL from "@/lib/database";
 import { checkInstructor, getLoggedInUser, insertLessons } from "@/lib/queries";
 
+// ! INSERT LESSONS ROUTE
 export async function POST(req, { params }) {
   const { courseId, moduleId } = await params;
-  console.log(moduleId);
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
@@ -31,11 +31,13 @@ export async function POST(req, { params }) {
     // const lessonId = uuidv4();
 
     // Insert the lesson
-    await mySQL(insertLessons, [moduleId, title, order_index]);
+    const data = await mySQL(insertLessons, [moduleId, title, order_index]);
+    console.log("ROUTE DATA", data);
 
     // Return the complete lesson object
     return Response.json({
-      module_id: moduleId,
+      id: data.insertId,
+      module_id: Number(moduleId),
       title,
       order_index,
     });

@@ -12,6 +12,13 @@ export default function LessonContentEditor({
   onSave,
   onClose,
 }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(
+    lesson.image ? lesson.image.value : null
+  );
   const [content, setContent] = useState({
     content: {
       type: "TEXT",
@@ -22,15 +29,7 @@ export default function LessonContentEditor({
         : "",
     },
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(
-    lesson.image ? lesson.image.value : null
-  );
-  const router = useRouter();
-  console.log(content.content);
-  console.log(lesson);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Grip, Plus, Video, FileText, Trash, Edit } from "lucide-react";
@@ -19,8 +18,7 @@ export default function LessonManager({
   const [newLessonTitle, setNewLessonTitle] = useState("");
   const [editingLesson, setEditingLesson] = useState(null);
   const router = useRouter();
-  console.log("LESSONS", lessons);
-  console.log("EDITING LESSON", editingLesson);
+
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -73,6 +71,7 @@ export default function LessonManager({
       if (!response.ok) throw new Error("Failed to add lesson");
 
       const newLesson = await response.json();
+      console.log("NEW LESSON", newLesson);
       setLessons([...lessons, newLesson]);
       router.refresh();
     } catch (err) {

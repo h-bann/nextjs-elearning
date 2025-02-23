@@ -22,8 +22,8 @@ export default function ModuleManager({ course, addModule }) {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState("");
-  console.log("COURSE", course);
-  console.log("MODULEMANAGER", modules);
+  // console.log("COURSE", course);
+  // console.log("MODULEMANAGER", modules);
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -70,12 +70,20 @@ export default function ModuleManager({ course, addModule }) {
     try {
       const formData = new FormData();
       formData.append("title", newModuleTitle);
-      formData.append("order_index", modules.length + 1);
+      formData.append("order_index", course.modules.length + 1);
 
-      await addModule(formData);
-
+      // await addModule(formData);
+      const response = await fetch(`/api/courses/${id}/modules`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.get("title"),
+          order_index: formData.get("order_index"),
+        }),
+      });
       const newModule = await response.json();
-      setModules([...modules, newModule]);
+
+      setModules([...course.modules, newModule]);
       setExpandedModules((prev) => ({
         ...prev,
         [newModule.id]: true,

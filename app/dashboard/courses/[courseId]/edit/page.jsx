@@ -9,6 +9,7 @@ import {
   getLessons,
   getLoggedInUser,
   getModules,
+  insertModules,
 } from "@/lib/queries";
 import { revalidatePath } from "next/cache";
 import { cache } from "react";
@@ -59,19 +60,27 @@ export default async function CourseEditPage({ params }) {
     redirect("/dashboard/courses");
   }
 
-  async function addModule(formData) {
-    "use server";
-    const response = await fetch(`/api/courses/${id}/modules`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: formData.get("title"),
-        order_index: formData.get("order_index"),
-      }),
-    });
-    if (!response.ok) throw new Error("Failed to add module");
-    revalidatePath(`/courses/${courseId}`);
-  }
+  // async function addModule(formData) {
+  //   "use server";
+  //   const response = await fetch(`/api/courses/${id}/modules`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       title: formData.get("title"),
+  //       order_index: formData.get("order_index"),
+  //     }),
+  //     cache: "no-store",
+  //   });
+  //   await mySQL(insertModules, [
+  //     courseData.id,
+  //     formData.get("title"),
+  //     formData.get("order_index"),
+  //   ]);
+  //   const courseData = await getCourseAndModules(courseId);
+
+  //   if (!response.ok) throw new Error("Failed to add module");
+  //   revalidatePath(`dashboard/courses/${courseId}/edit`);
+  // }
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -80,7 +89,7 @@ export default async function CourseEditPage({ params }) {
         <p className="text-gray-600">Manage your course content</p>
       </div>
 
-      <ModuleManager course={courseData} addModule={addModule} />
+      <ModuleManager course={courseData} />
     </div>
   );
 }

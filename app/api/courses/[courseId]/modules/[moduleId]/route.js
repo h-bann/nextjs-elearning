@@ -1,7 +1,13 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
-import { checkInstructor, deleteModule, getLoggedInUser } from "@/lib/queries";
+import {
+  checkInstructor,
+  deleteModule,
+  deleteModuleAndLessons,
+  deleteMultipleLessons,
+  getLoggedInUser,
+} from "@/lib/queries";
 
 // ! DELETE MODULES ROUTE
 export async function DELETE(req, { params }) {
@@ -31,7 +37,8 @@ export async function DELETE(req, { params }) {
     }
 
     // Delete the module
-    await mySQL(deleteModule, [moduleId, courseId]);
+    await mySQL(deleteModuleAndLessons, [moduleId, courseId]);
+    // await mySQL(deleteMultipleLessons, [moduleId])
 
     return Response.json({ message: "Module deleted successfully" });
   } catch (error) {

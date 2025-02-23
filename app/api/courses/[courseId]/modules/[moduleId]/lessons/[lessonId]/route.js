@@ -32,10 +32,10 @@ export async function PUT(req, { params }) {
       return Response.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { text, image } = await req.json();
-
+    const { content, image } = await req.json();
+    console.log("LESSON ID", lessonId);
     // Update lesson content
-    await mySQL(addContent, [lessonId, text.type, text.value]);
+    await mySQL(addContent, [lessonId, content.type, content.value]);
     if (image) {
       await mySQL(addContent, [lessonId, image.type, image.value]);
     }

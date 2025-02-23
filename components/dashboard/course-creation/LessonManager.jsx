@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Grip, Plus, Video, FileText, Trash, Edit } from "lucide-react";
 import LessonContentEditor from "./LessonContentEditor";
+import { useRouter } from "next/navigation";
 
 export default function LessonManager({
   courseId,
@@ -17,7 +18,9 @@ export default function LessonManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLessonTitle, setNewLessonTitle] = useState("");
   const [editingLesson, setEditingLesson] = useState(null);
-
+  const router = useRouter();
+  console.log("LESSONS", lessons);
+  console.log("EDITING LESSON", editingLesson);
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -46,7 +49,6 @@ export default function LessonManager({
       console.error("Failed to update lesson order:", error);
     }
   };
-
   const handleAddLesson = async (e) => {
     e.preventDefault();
     if (!newLessonTitle.trim()) return;
@@ -72,6 +74,7 @@ export default function LessonManager({
 
       const newLesson = await response.json();
       setLessons([...lessons, newLesson]);
+      router.refresh();
     } catch (err) {
       setError("Failed to add lesson");
     } finally {
@@ -155,6 +158,8 @@ export default function LessonManager({
           moduleId={moduleId}
           lesson={editingLesson}
           onSave={async (content) => {
+            console.log("CONTENT 3", content);
+
             try {
               const response = await fetch(
                 `/api/courses/${courseId}/modules/${moduleId}/lessons/${editingLesson.id}`,
@@ -176,6 +181,7 @@ export default function LessonManager({
                 )
               );
               setEditingLesson(null);
+              router.refresh();
             } catch (error) {
               setError("Failed to update lesson");
             }

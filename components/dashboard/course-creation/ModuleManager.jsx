@@ -13,10 +13,8 @@ import {
 } from "lucide-react";
 import LessonManager from "./LessonManager";
 
-export default function ModuleManager({ course }) {
-  console.log(course);
+export default function ModuleManager({ course, addModule }) {
   const { id, title } = course;
-
   const router = useRouter();
   const [modules, setModules] = useState(course.modules);
   const [expandedModules, setExpandedModules] = useState({});
@@ -24,7 +22,8 @@ export default function ModuleManager({ course }) {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState("");
-
+  console.log("COURSE", course);
+  console.log("MODULEMANAGER", modules);
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -69,16 +68,11 @@ export default function ModuleManager({ course }) {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`/api/courses/${courseId}/modules`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: newModuleTitle,
-          order_index: modules.length + 1,
-        }),
-      });
+      const formData = new FormData();
+      formData.append("title", newModuleTitle);
+      formData.append("order_index", modules.length + 1);
 
-      if (!response.ok) throw new Error("Failed to add module");
+      await addModule(formData);
 
       const newModule = await response.json();
       setModules([...modules, newModule]);
@@ -88,6 +82,7 @@ export default function ModuleManager({ course }) {
       }));
       setNewModuleTitle("");
       setIsModalOpen(false);
+      router.refresh();
     } catch (err) {
       setError("Failed to add module");
     } finally {

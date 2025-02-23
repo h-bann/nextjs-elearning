@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Image as ImageIcon, Plus } from "lucide-react";
 import { Upload, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LessonContentEditor({
   lesson,
@@ -12,17 +13,24 @@ export default function LessonContentEditor({
   onClose,
 }) {
   const [content, setContent] = useState({
-    text: {
+    content: {
       type: "TEXT",
-      value:
-        lesson.content?.find((c) => c.content_type === "TEXT")?.content || "",
+      value: Array.isArray(lesson.content)
+        ? lesson.content.find((c) => c.content_type === "TEXT")?.value || ""
+        : lesson.content?.type === "TEXT"
+        ? lesson.content.value || ""
+        : "",
     },
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-
+  const [imagePreview, setImagePreview] = useState(
+    lesson.image ? lesson.image.value : null
+  );
+  const router = useRouter();
+  console.log(content.content);
+  console.log(lesson);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -70,6 +78,7 @@ export default function LessonContentEditor({
 
       await onSave(updatedContent);
       onClose();
+      router.refresh();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -101,12 +110,12 @@ export default function LessonContentEditor({
               </label>
               <textarea
                 // value={content.text?.value || ""}
-                value={content.text.value}
+                value={content.content.value}
                 onChange={(e) =>
                   setContent((prev) => ({
                     ...prev,
-                    text: {
-                      ...prev.text,
+                    content: {
+                      ...prev.content,
                       type: "TEXT",
                       value: e.target.value,
                     },

@@ -45,7 +45,7 @@ export default async function CourseEditPage({ params }) {
   const { courseId } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
-  // console.log(courseId);
+
   if (!token) {
     redirect("/auth/signin");
   }
@@ -67,11 +67,7 @@ export default async function CourseEditPage({ params }) {
         <p className="text-gray-600">Manage your course content</p>
       </div>
 
-      <ModuleManager
-        courseId={courseId}
-        courseName={courseData.title}
-        initialModules={courseData.modules || []}
-      />
+      <ModuleManager course={courseData} />
     </div>
   );
 }

@@ -2,16 +2,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Grip, Plus, ChevronDown, ChevronUp, Trash, Edit } from "lucide-react";
+import {
+  Grip,
+  Plus,
+  ChevronDown,
+  ChevronUp,
+  Trash,
+  Edit,
+  CodeSquare,
+} from "lucide-react";
 import LessonManager from "./LessonManager";
 
-export default function ModuleManager({
-  courseId,
-  courseName,
-  initialModules,
-}) {
+export default function ModuleManager({ course }) {
+  console.log(course);
+  const { id, title } = course;
+
   const router = useRouter();
-  const [modules, setModules] = useState(initialModules);
+  const [modules, setModules] = useState(course.modules);
   const [expandedModules, setExpandedModules] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,10 +41,10 @@ export default function ModuleManager({
     setModules(updatedModules);
 
     try {
-      await fetch(`/api/courses/${courseId}/modules/reorder`, {
+      await fetch(`/api/courses/${id}/reorder`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modules: updatedModules }),
+        body: JSON.stringify({ type: "modules", items: updatedModules }),
       });
     } catch (error) {
       console.error("Failed to update module order:", error);
@@ -92,7 +99,7 @@ export default function ModuleManager({
     if (!confirm("Are you sure you want to delete this module?")) return;
 
     try {
-      await fetch(`/api/courses/${courseId}/modules/${moduleId}`, {
+      await fetch(`/api/courses/${id}/modules/${moduleId}`, {
         method: "DELETE",
       });
 
@@ -162,8 +169,8 @@ export default function ModuleManager({
                       {expandedModules[module.id] && (
                         <div className="mt-4 pl-9">
                           <LessonManager
-                            courseId={courseId}
-                            courseName={courseName}
+                            courseId={id}
+                            courseName={title}
                             moduleId={module.id}
                             initialLessons={module.lessons || []}
                           />

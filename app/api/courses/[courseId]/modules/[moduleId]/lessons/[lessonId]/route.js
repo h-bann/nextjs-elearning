@@ -33,7 +33,6 @@ export async function PUT(req, { params }) {
     }
 
     const { text, image } = await req.json();
-    console.log(text, image);
 
     // Update lesson content
     await mySQL(addContent, [lessonId, text.type, text.value]);

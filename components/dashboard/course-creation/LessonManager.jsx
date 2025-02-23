@@ -17,7 +17,7 @@ export default function LessonManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLessonTitle, setNewLessonTitle] = useState("");
   const [editingLesson, setEditingLesson] = useState(null);
-  console.log(editingLesson);
+
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -33,14 +33,15 @@ export default function LessonManager({
     setLessons(updatedLessons);
 
     try {
-      await fetch(
-        `/api/courses/${courseId}/modules/${moduleId}/lessons/reorder`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ lessons: updatedLessons }),
-        }
-      );
+      await fetch(`/api/courses/${courseId}/reorder`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "lessons",
+          items: updatedLessons,
+          moduleId,
+        }),
+      });
     } catch (error) {
       console.error("Failed to update lesson order:", error);
     }

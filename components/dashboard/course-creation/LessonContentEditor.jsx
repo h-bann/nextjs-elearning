@@ -11,43 +11,18 @@ export default function LessonContentEditor({
   onSave,
   onClose,
 }) {
-  //   const [content, setContent] = useState({
-  //     text: { value: lesson.content || "", type: "text" },
-  //   });
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState({
+    text: {
+      type: "TEXT",
+      value:
+        lesson.content?.find((c) => c.content_type === "TEXT")?.content || "",
+    },
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  //   const handleImageUpload = async (e) => {
-  //     const file = e.target.files[0];
-  //     if (!file) return;
-
-  //     const formData = new FormData();
-  //     formData.append("image", file);
-  //     formData.append("title", lesson.title);
-  //     formData.append("courseName", courseName);
-  //     formData.append("moduleId", moduleId);
-
-  //     try {
-  //       const response = await fetch("/api/courses/image-upload", {
-  //         method: "POST",
-  //         body: formData,
-  //       });
-
-  //       if (!response.ok) throw new Error("Failed to upload image");
-
-  //       const data = await response.json();
-  //       setContent((prev) => ({
-  //         ...prev,
-  //         images: [...prev.images, data.url],
-  //       }));
-  //     } catch (err) {
-  //       setError("Failed to upload image");
-  //     }
-  //   };
-  console.log(content);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -93,7 +68,6 @@ export default function LessonContentEditor({
         updatedContent = { ...content };
       }
 
-      console.log(updatedContent);
       await onSave(updatedContent);
       onClose();
     } catch (err) {
@@ -126,13 +100,14 @@ export default function LessonContentEditor({
                 Lesson Content
               </label>
               <textarea
-                value={content.text?.value || ""}
+                // value={content.text?.value || ""}
+                value={content.text.value}
                 onChange={(e) =>
                   setContent((prev) => ({
                     ...prev,
                     text: {
                       ...prev.text,
-                      type: "text",
+                      type: "TEXT",
                       value: e.target.value,
                     },
                   }))

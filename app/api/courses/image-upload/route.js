@@ -21,10 +21,10 @@ export async function POST(req) {
 
     // Get the form data
     const formData = await req.formData();
-    const file = formData.get("image");
-    const lessonTitle = formData.get("title").replace(/\s+/g, "_");
-    const courseName = formData.get("courseName").replace(/\s+/g, "_");
-    const moduleId = formData.get("moduleId");
+    const file = formData.get("image") || null;
+    const lessonTitle = formData.get("lessonTitle")?.replace(/\s+/g, "_") || "";
+    const courseName = formData.get("title")?.replace(/\s+/g, "_") || "";
+    const moduleId = formData.get("moduleId") || null;
 
     if (!file) {
       return Response.json({ message: "No file provided" }, { status: 400 });

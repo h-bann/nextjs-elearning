@@ -56,7 +56,7 @@ export default function LessonManager({
 
     try {
       const response = await fetch(
-        `/api/courses/${courseId}/modules/${moduleId}/lessons`,
+        `/api/courses/course-editing/${courseId}/modules/${moduleId}/lessons`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -157,11 +157,9 @@ export default function LessonManager({
           moduleId={moduleId}
           lesson={editingLesson}
           onSave={async (content) => {
-            console.log("CONTENT 3", content);
-
             try {
               const response = await fetch(
-                `/api/courses/${courseId}/modules/${moduleId}/lessons/${editingLesson.id}`,
+                `/api/courses/course-editing/${courseId}/modules/${moduleId}/lessons/${editingLesson.id}`,
                 {
                   method: "PUT",
                   headers: { "Content-Type": "application/json" },

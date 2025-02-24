@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
 import { getLoggedInUser, insertCourse } from "@/lib/queries";
 
+// ! OVERALL COURSE CREATION ROUTE
 export async function POST(req) {
   try {
     // Verify authentication

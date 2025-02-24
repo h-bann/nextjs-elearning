@@ -53,8 +53,8 @@ export default function LessonContentEditor({
       if (imageFile) {
         const formData = new FormData();
         formData.append("image", imageFile);
-        formData.append("title", lesson.title);
-        formData.append("courseName", courseName);
+        formData.append("lessonTitle", lesson.title);
+        formData.append("title", courseName);
         formData.append("moduleId", moduleId);
 
         const imageResponse = await fetch("/api/courses/image-upload", {

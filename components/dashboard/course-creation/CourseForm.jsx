@@ -41,6 +41,7 @@ export default function CourseForm({ instructorId }) {
         const imageFormData = new FormData();
         imageFormData.append("image", imageFile);
         imageFormData.append("title", formData.title);
+
         const imageResponse = await fetch("/api/courses/image-upload", {
           method: "POST",
           body: imageFormData,

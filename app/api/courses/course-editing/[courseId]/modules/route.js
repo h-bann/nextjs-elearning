@@ -27,9 +27,10 @@ export async function POST(req, { params }) {
       return Response.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    await mySQL(insertModules, [courseId, title, order_index]);
+    const data = await mySQL(insertModules, [courseId, title, order_index]);
 
     return Response.json({
+      id: data.insertId,
       course_id: courseId,
       title,
       order_index,

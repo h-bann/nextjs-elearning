@@ -92,7 +92,7 @@ export default function ProfileForm({ user }) {
       </div> */}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-900 mb-2">
           Username
         </label>
         <div className="relative rounded-md shadow-sm">

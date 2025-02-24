@@ -3,5 +3,9 @@
 // Progress tracking
 // Navigation between lessons
 export default function CourseContentPage() {
-  return <></>;
+  return (
+    <>
+      <p>test</p>
+    </>
+  );
 }

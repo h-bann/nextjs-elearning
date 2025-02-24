@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { completeLessonAction } from "@/lib/serverActions";
 
 export default function CompleteLessonButton({ lessonId }) {
   const [completing, setCompleting] = useState(false);
@@ -11,14 +12,17 @@ export default function CompleteLessonButton({ lessonId }) {
   const markAsComplete = async () => {
     setCompleting(true);
     try {
-      const response = await fetch(`/api/lessons/${lessonId}/complete`, {
-        method: "POST",
-      });
+      // Call the server action directly
+      const result = await completeLessonAction(lessonId);
 
-      if (!response.ok) throw new Error("Failed to mark lesson as complete");
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
       setCompleted(true);
     } catch (err) {
       setError("Failed to mark lesson as complete");
+      console.error(err);
     } finally {
       setCompleting(false);
     }

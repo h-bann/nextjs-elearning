@@ -1,76 +1,24 @@
 // components/course/CourseContent.jsx
-"use client";
 
-import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, CheckCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
+import CompleteLessonButton from "./CompleteLessonButton";
+import mySQL from "@/lib/database";
+import { getCourseAndModules } from "@/lib/utils";
 
-export default function CourseContent({
-  moduleId,
+export default async function CourseContent({
+  lesson,
+  courseId,
   lessonId,
   userId,
   courseData,
 }) {
-  const [lesson, setLesson] = useState(courseData.modules[0]?.lessons[0]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [completing, setCompleting] = useState(false);
-  console.log(courseData);
   console.log(lesson);
-  //   useEffect(() => {
-  //     fetchLessonContent();
-  //   }, [lessonId]);
 
-  //   const fetchLessonContent = async () => {
-  //     setLoading(true);
-  //     setError(null);
-
-  //     try {
-  //       const response = await fetch(`/api/lessons/${lessonId}`);
-  //       if (!response.ok) throw new Error("Failed to fetch lesson");
-
-  //       const data = await response.json();
-  //       setLesson(data);
-  //     } catch (err) {
-  //       setError("Failed to load lesson content");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  const markAsComplete = async () => {
-    setCompleting(true);
-    try {
-      const response = await fetch(`/api/lessons/${lessonId}/complete`, {
-        method: "POST",
-      });
-
-      if (!response.ok) throw new Error("Failed to mark lesson as complete");
-
-      // Update local state
-      setLesson((prev) => ({
-        ...prev,
-        completed: true,
-      }));
-    } catch (err) {
-      setError("Failed to mark lesson as complete");
-    } finally {
-      setCompleting(false);
-    }
-  };
-
-  if (loading) {
+  if (!lesson) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-600">
-        {error}
+        <p>Lesson not found</p>
       </div>
     );
   }
@@ -81,29 +29,16 @@ export default function CourseContent({
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">{lesson.title}</h1>
-          {!lesson.completed && (
-            <button
-              onClick={markAsComplete}
-              disabled={completing}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-            >
-              {completing ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <CheckCircle className="w-4 h-4" />
-              )}
-              Mark Complete
-            </button>
-          )}
+          {!lesson.completed && <CompleteLessonButton lessonId={lesson.id} />}
         </div>
-        {/* {lesson.title && (
-          <p className="text-gray-600">Module: {lesson.title}</p>
-        )} */}
+        {lesson.module_title && (
+          <p className="text-gray-600">Module: {lesson.module_title}</p>
+        )}
       </div>
 
       {/* Lesson Content */}
       <div className="flex flex-row-reverse justify-end">
-        {lesson.content.map((item) => {
+        {lesson.map((item) => {
           switch (item.content_type) {
             case "TEXT":
               return <p key={item.id}>{item.value}</p>;

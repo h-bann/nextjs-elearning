@@ -1,42 +1,24 @@
-// components/course/CourseSidebar.jsx
 "use client";
-
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ChevronDown, ChevronUp, CheckCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function CourseSidebar({
   course,
   activeModuleId,
   activeLessonId,
-  onNavigate,
 }) {
-  const router = useRouter();
+  console.log(Number(activeLessonId));
+  console.log(course.modules[0].lessons[0].id);
+  // Use client-side state to track expanded modules
   const [expandedModules, setExpandedModules] = useState({
-    [activeModuleId]: true,
+    [activeModuleId]: true, // Start with active module expanded
   });
-
-  useEffect(() => {
-    // Expand the active module
-    if (activeModuleId) {
-      setExpandedModules((prev) => ({
-        ...prev,
-        [activeModuleId]: true,
-      }));
-    }
-  }, [activeModuleId]);
-
-  const handleLessonClick = (moduleId, lessonId) => {
-    // Update URL with new lesson
-    router.push(
-      `/course/${course.id}/learn?moduleId=${moduleId}&lessonId=${lessonId}`
-    );
-    onNavigate?.();
-
-    // On mobile, hide sidebar after selection
-    // if (window.innerWidth < 768) {
-    //   document.getElementById("course-sidebar").classList.add("hidden");
-    // }
+  const toggleModule = (moduleId) => {
+    setExpandedModules((prev) => ({
+      ...prev,
+      [moduleId]: !prev[moduleId],
+    }));
   };
 
   return (
@@ -51,14 +33,9 @@ export default function CourseSidebar({
         {course.modules.map((module) => (
           <div key={module.id} className="border-b">
             {/* Module Header */}
-            <button
-              onClick={() =>
-                setExpandedModules((prev) => ({
-                  ...prev,
-                  [module.id]: !prev[module.id],
-                }))
-              }
-              className="w-full p-4 flex items-center justify-between hover:bg-gray-50"
+            <div
+              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer"
+              onClick={() => toggleModule(module.id)}
             >
               <span className="font-medium">{module.title}</span>
               {expandedModules[module.id] ? (
@@ -66,26 +43,28 @@ export default function CourseSidebar({
               ) : (
                 <ChevronDown className="w-5 h-5" />
               )}
-            </button>
+            </div>
 
             {/* Lessons List */}
             {expandedModules[module.id] && (
               <div className="bg-gray-50">
                 {module.lessons.map((lesson) => (
-                  <button
+                  <Link
                     key={lesson.id}
-                    onClick={() => handleLessonClick(module.id, lesson.id)}
-                    className={`w-full p-4 pl-8 flex items-center text-left hover:bg-gray-100 ${
-                      lesson.id === activeLessonId
+                    href={`/courses/${course.id}/learn?moduleId=${module.id}&lessonId=${lesson.id}`}
+                    className={`block w-full p-4 pl-8 hover:bg-gray-100 ${
+                      lesson.id == activeLessonId
                         ? "bg-blue-50 text-blue-600"
                         : ""
                     }`}
                   >
-                    <span className="flex-1">{lesson.title}</span>
-                    {lesson.completed && (
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                    )}
-                  </button>
+                    <div className="flex items-center">
+                      <span className="flex-1">{lesson.title}</span>
+                      {lesson.completed && (
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                      )}
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -97,12 +76,12 @@ export default function CourseSidebar({
       <div className="p-4 border-t bg-white">
         <div className="mb-2 flex justify-between text-sm">
           <span>Course Progress</span>
-          <span>{course.progress}%</span>
+          <span>{course.progress || 0}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
             className="bg-green-500 h-2 rounded-full"
-            style={{ width: `${course.progress}%` }}
+            style={{ width: `${course.progress || 0}%` }}
           />
         </div>
       </div>

@@ -9,7 +9,6 @@ export default function CourseCard({ course }) {
   const [showDescription, setShowDescription] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
-  console.log(course);
   const handleCourseClick = () => {
     if (!course.isEnrolled) {
       router.push(`/courses/${course.id}/purchase`);

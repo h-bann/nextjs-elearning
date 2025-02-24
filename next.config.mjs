@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ["schoolforsubmissives.lon1.digitaloceanspaces.com"],
+  },
   async rewrites() {
     return [
       // {

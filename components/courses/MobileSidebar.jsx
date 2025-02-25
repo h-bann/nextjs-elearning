@@ -1,6 +1,7 @@
 "use client";
 
 import CourseSidebar from "./CourseSidebar";
+import { useEffect } from "react";
 
 export default function MobileSidebar({
   course,

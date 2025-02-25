@@ -15,6 +15,7 @@ import CourseSidebar from "@/components/courses/CourseSidebar";
 import CourseContent from "@/components/courses/CourseContent";
 import MobileHeader from "@/components/courses/MobileHeader";
 import { getCompletedLessons, canAccessLesson } from "@/lib/serverActions";
+import { CourseProgressProvider } from "@/lib/courseProgressContext";
 
 export default async function LearnPage({ params, searchParams }) {
   const { courseId } = await params;
@@ -72,39 +73,42 @@ export default async function LearnPage({ params, searchParams }) {
       redirect(`/courses/${courseId}`);
     }
   }
-  console.log(completedLessons);
-  return (
-    <div
-      key={lessId}
-      className="min-h-screen bg-gray-50 flex flex-col md:flex-row"
-    >
-      {/* Mobile Header - client component */}
-      <MobileHeader
-        title={courseData.title}
-        course={courseData}
-        activeModuleId={modId}
-        activeLessonId={lessId}
-        commpletedLessons={completedLessons}
-      />
 
-      {/* Sidebar - server pre-rendered */}
-      <div className="hidden md:block w-full md:w-80 bg-white border-r overflow-y-auto">
-        <CourseSidebar
+  return (
+    <CourseProgressProvider
+      initialCompletedLessons={completedLessons}
+      courseModules={courseData.modules}
+    >
+      <div
+        key={lessId}
+        className="min-h-screen bg-gray-50 flex flex-col md:flex-row"
+      >
+        {/* Mobile Header - client component */}
+        <MobileHeader
+          title={courseData.title}
           course={courseData}
           activeModuleId={modId}
           activeLessonId={lessId}
-          completedLessons={completedLessons}
         />
-      </div>
 
-      {/* Main Content - server rendered */}
-      <main className="flex-1 overflow-y-auto">
-        <CourseContent
-          lesson={lessonContent}
-          userId={users[0].id}
-          courseId={courseId}
-        />
-      </main>
-    </div>
+        {/* Sidebar - server pre-rendered */}
+        <div className="hidden md:block w-full md:w-80 bg-white border-r overflow-y-auto">
+          <CourseSidebar
+            course={courseData}
+            activeModuleId={modId}
+            activeLessonId={lessId}
+          />
+        </div>
+
+        {/* Main Content - server rendered */}
+        <main className="flex-1 overflow-y-auto">
+          <CourseContent
+            lesson={lessonContent}
+            userId={users[0].id}
+            courseId={courseId}
+          />
+        </main>
+      </div>
+    </CourseProgressProvider>
   );
 }

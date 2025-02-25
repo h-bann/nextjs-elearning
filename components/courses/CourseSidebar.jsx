@@ -2,17 +2,20 @@
 import Link from "next/link";
 import { ChevronDown, ChevronUp, CheckCircle, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useCourseProgress } from "@/lib/courseProgressContext";
 
 export default function CourseSidebar({
   course,
   activeModuleId,
   activeLessonId,
-  completedLessons = [], // Add this prop
   onNavigate,
 }) {
   const [expandedModules, setExpandedModules] = useState({
     [activeModuleId]: true,
   });
+
+  const { completedLessons, isLessonCompleted, isLessonAvailable } =
+    useCourseProgress();
 
   // Automatically expand the active module
   useEffect(() => {
@@ -32,24 +35,24 @@ export default function CourseSidebar({
   };
 
   // Function to check if a lesson is available
-  const isLessonAvailable = (moduleIndex, lessonIndex) => {
-    // First lesson is always available
-    if (moduleIndex === 0 && lessonIndex === 0) return true;
+  // const isLessonAvailable = (moduleIndex, lessonIndex) => {
+  //   // First lesson is always available
+  //   if (moduleIndex === 0 && lessonIndex === 0) return true;
 
-    // Get the previous lesson
-    let prevLesson;
-    if (lessonIndex > 0) {
-      // Previous lesson in same module
-      prevLesson = course.modules[moduleIndex].lessons[lessonIndex - 1];
-    } else if (moduleIndex > 0) {
-      // Last lesson of previous module
-      const prevModule = course.modules[moduleIndex - 1];
-      prevLesson = prevModule.lessons[prevModule.lessons.length - 1];
-    }
+  //   // Get the previous lesson
+  //   let prevLesson;
+  //   if (lessonIndex > 0) {
+  //     // Previous lesson in same module
+  //     prevLesson = course.modules[moduleIndex].lessons[lessonIndex - 1];
+  //   } else if (moduleIndex > 0) {
+  //     // Last lesson of previous module
+  //     const prevModule = course.modules[moduleIndex - 1];
+  //     prevLesson = prevModule.lessons[prevModule.lessons.length - 1];
+  //   }
 
-    // Check if previous lesson is completed
-    return prevLesson ? completedLessons.includes(prevLesson.id) : true;
-  };
+  //   // Check if previous lesson is completed
+  //   return prevLesson ? completedLessons.includes(prevLesson.id) : true;
+  // };
 
   return (
     <div className="h-full flex flex-col">

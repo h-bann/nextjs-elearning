@@ -34,39 +34,29 @@ export default function CourseSidebar({
     }));
   };
 
-  // Function to check if a lesson is available
-  // const isLessonAvailable = (moduleIndex, lessonIndex) => {
-  //   // First lesson is always available
-  //   if (moduleIndex === 0 && lessonIndex === 0) return true;
+  // Calculate total lessons in the course
+  const totalLessons = course.modules.reduce(
+    (total, module) => total + module.lessons.length,
+    0
+  );
 
-  //   // Get the previous lesson
-  //   let prevLesson;
-  //   if (lessonIndex > 0) {
-  //     // Previous lesson in same module
-  //     prevLesson = course.modules[moduleIndex].lessons[lessonIndex - 1];
-  //   } else if (moduleIndex > 0) {
-  //     // Last lesson of previous module
-  //     const prevModule = course.modules[moduleIndex - 1];
-  //     prevLesson = prevModule.lessons[prevModule.lessons.length - 1];
-  //   }
-
-  //   // Check if previous lesson is completed
-  //   return prevLesson ? completedLessons.includes(prevLesson.id) : true;
-  // };
+  // Calculate completion percentage
+  const completionPercentage =
+    Math.round((completedLessons.length / totalLessons) * 100) || 0;
 
   return (
     <div className="h-full flex flex-col">
       {/* Course Title */}
-      <div className="p-4 border-b">
+      <div className="py-4 px-4 border-b">
         <h2 className="text-lg font-semibold">{course.title}</h2>
       </div>
 
-      {/* Modules List */}
+      {/* Modules List - Make this scroll independently */}
       <div className="flex-1 overflow-y-auto">
         {course.modules.map((module, moduleIndex) => (
           <div key={module.id} className="border-b">
             <div
-              className="w-full p-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer"
+              className="w-full p-3 flex items-center justify-between hover:bg-gray-50 cursor-pointer"
               onClick={() => toggleModule(module.id)}
             >
               <span className="font-medium">{module.title}</span>
@@ -80,24 +70,25 @@ export default function CourseSidebar({
             {expandedModules[module.id] && (
               <div className="bg-gray-50">
                 {module.lessons.map((lesson, lessonIndex) => {
+                  // Explicitly convert IDs to numbers for comparison
+                  const isCompleted = isLessonCompleted(Number(lesson.id));
                   const isAvailable = isLessonAvailable(
                     moduleIndex,
                     lessonIndex
                   );
-                  const isCompleted = completedLessons.includes(lesson.id);
+                  const isActive = Number(lesson.id) === Number(activeLessonId);
 
                   return isAvailable ? (
                     <Link
                       key={lesson.id}
                       href={`/courses/${course.id}/learn?moduleId=${module.id}&lessonId=${lesson.id}`}
-                      className={`block w-full p-4 pl-8 hover:bg-gray-100 ${
-                        lesson.id == activeLessonId
-                          ? "bg-blue-50 text-blue-600"
-                          : ""
+                      className={`block w-full p-3 pl-8 hover:bg-gray-100 ${
+                        isActive ? "bg-blue-50 text-blue-600" : ""
                       }`}
+                      onClick={onNavigate}
                     >
                       <div className="flex items-center">
-                        <span className="flex-1">{lesson.title}</span>
+                        <span className="flex-1 text-sm">{lesson.title}</span>
                         {isCompleted && (
                           <CheckCircle className="w-4 h-4 text-green-500" />
                         )}
@@ -106,10 +97,10 @@ export default function CourseSidebar({
                   ) : (
                     <div
                       key={lesson.id}
-                      className="block w-full p-4 pl-8 text-gray-400 cursor-not-allowed"
+                      className="block w-full p-3 pl-8 text-gray-400 cursor-not-allowed"
                     >
                       <div className="flex items-center">
-                        <span className="flex-1">{lesson.title}</span>
+                        <span className="flex-1 text-sm">{lesson.title}</span>
                         <Lock className="w-4 h-4" />
                       </div>
                     </div>
@@ -121,37 +112,16 @@ export default function CourseSidebar({
         ))}
       </div>
 
-      {/* Progress Footer */}
-      <div className="p-4 border-t bg-white">
+      {/* Progress Footer - Fixed at bottom */}
+      <div className="py-3 px-4 border-t bg-white shrink-0">
         <div className="mb-2 flex justify-between text-sm">
           <span>Course Progress</span>
-          <span>
-            {Math.round(
-              (completedLessons.length /
-                course.modules.reduce(
-                  (total, module) => total + module.lessons.length,
-                  0
-                )) *
-                100
-            ) || 0}
-            %
-          </span>
+          <span>{completionPercentage}%</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
             className="bg-green-500 h-2 rounded-full"
-            style={{
-              width: `${
-                Math.round(
-                  (completedLessons.length /
-                    course.modules.reduce(
-                      (total, module) => total + module.lessons.length,
-                      0
-                    )) *
-                    100
-                ) || 0
-              }%`,
-            }}
+            style={{ width: `${completionPercentage}%` }}
           />
         </div>
       </div>

@@ -4,10 +4,8 @@ import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
 import { redirect } from "next/navigation";
 import {
-  getCourseWithModules,
   getLoggedInUser,
   checkExistingEnrollment,
-  getLessonById,
   getContent,
 } from "@/lib/queries";
 import { getCourseAndModules } from "@/lib/utils";
@@ -17,9 +15,18 @@ import MobileHeader from "@/components/courses/MobileHeader";
 import { getCompletedLessons, canAccessLesson } from "@/lib/serverActions";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
 
+// This forces the page to be dynamic and not cached
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
+
 export default async function LearnPage({ params, searchParams }) {
   const { courseId } = await params;
   const { moduleId, lessonId } = await searchParams;
+
+  // Add a timestamp parameter to ensure fresh data on each request
+  const timestamp = Date.now();
+
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
 
@@ -56,7 +63,7 @@ export default async function LearnPage({ params, searchParams }) {
   // Get current lesson content
   const lessonContent = await mySQL(getContent, [lessId]);
 
-  // Use our fixed getCompletedLessons function, passing courseId
+  // Get fresh completion data
   const completedLessonsResult = await getCompletedLessons(courseId);
   const completedLessons = completedLessonsResult.completedLessons || [];
 
@@ -80,10 +87,10 @@ export default async function LearnPage({ params, searchParams }) {
       courseModules={courseData.modules}
     >
       <div
-        key={lessId}
-        className="min-h-screen bg-gray-50 flex flex-col md:flex-row"
+        key={`${lessId}-${timestamp}`}
+        className="flex flex-col md:flex-row h-[calc(100vh-4rem)] overflow-hidden bg-white"
       >
-        {/* Mobile Header - client component */}
+        {/* Mobile Header */}
         <MobileHeader
           title={courseData.title}
           course={courseData}
@@ -91,8 +98,8 @@ export default async function LearnPage({ params, searchParams }) {
           activeLessonId={lessId}
         />
 
-        {/* Sidebar - server pre-rendered */}
-        <div className="hidden md:block w-full md:w-80 bg-white border-r overflow-y-auto">
+        {/* Sidebar - hidden on mobile */}
+        <div className="hidden md:block w-full md:w-80 bg-white border-r h-full overflow-y-auto">
           <CourseSidebar
             course={courseData}
             activeModuleId={modId}
@@ -100,7 +107,7 @@ export default async function LearnPage({ params, searchParams }) {
           />
         </div>
 
-        {/* Main Content - server rendered */}
+        {/* Main Content */}
         <main className="flex-1 overflow-y-auto">
           <CourseContent
             lesson={lessonContent}

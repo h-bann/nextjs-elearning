@@ -1,20 +1,14 @@
-// components/course/CourseContent.jsx
-
-import { ChevronLeft, ChevronRight, CheckCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
 import CompleteLessonButton from "./CompleteLessonButton";
 import mySQL from "@/lib/database";
-import { getCourseAndModules } from "@/lib/utils";
+import { getLessonCompletionStatus } from "@/lib/queries";
 
-export default async function CourseContent({
-  lesson,
-  courseId,
-  lessonId,
-  userId,
-  courseData,
-}) {
-  console.log(lesson);
-
+export default async function CourseContent({ lesson, userId }) {
+  const completionStatus = await mySQL(getLessonCompletionStatus, [
+    lesson[0]?.lesson_id,
+    userId,
+  ]);
+  const isCompleted = completionStatus.length > 0;
   if (!lesson) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -22,14 +16,18 @@ export default async function CourseContent({
       </div>
     );
   }
-
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="mx-auto px-4 py-8">
       {/* Lesson Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">{lesson.title}</h1>
-          {!lesson.completed && <CompleteLessonButton lessonId={lesson.id} />}
+          {!lesson.completed && (
+            <CompleteLessonButton
+              lessonId={lesson[0].lesson_id}
+              isCompleted={isCompleted}
+            />
+          )}
         </div>
         {lesson.module_title && (
           <p className="text-gray-600">Module: {lesson.module_title}</p>

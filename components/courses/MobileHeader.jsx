@@ -4,7 +4,12 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import MobileSidebar from "./MobileSidebar";
 
-export default function MobileHeader({ title }) {
+export default function MobileHeader({
+  title,
+  course,
+  activeModuleId,
+  activeLessonId,
+}) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -23,7 +28,14 @@ export default function MobileHeader({ title }) {
         </button>
       </div>
 
-      {isSidebarOpen && <MobileSidebar />}
+      {isSidebarOpen && (
+        <MobileSidebar
+          course={course}
+          activeModuleId={activeModuleId}
+          activeLessonId={activeLessonId}
+          onNavigate={() => setIsSidebarOpen(false)}
+        />
+      )}
     </>
   );
 }

@@ -14,6 +14,7 @@ import { getCourseAndModules } from "@/lib/utils";
 import CourseSidebar from "@/components/courses/CourseSidebar";
 import CourseContent from "@/components/courses/CourseContent";
 import MobileHeader from "@/components/courses/MobileHeader";
+import { getCompletedLessons, canAccessLesson } from "@/lib/serverActions";
 
 export default async function LearnPage({ params, searchParams }) {
   const { courseId } = await params;
@@ -46,22 +47,39 @@ export default async function LearnPage({ params, searchParams }) {
   if (!courseData || !courseData.modules.length) {
     redirect("/courses");
   }
-  // console.log(courseData);
+
   // Default to first lesson if none selected
   const modId = moduleId || courseData.modules[0]?.id;
   const lessId = lessonId || courseData.modules[0]?.lessons[0]?.id;
-  console.log(modId, lessId);
-  // Get current lesson content
-  const lessonData = await mySQL(getContent, [lessId]);
 
-  console.log("LESSONDATA", lessonData);
+  // Get current lesson content
+  const lessonContent = await mySQL(getContent, [lessId]);
+
+  // Get lesson access info
+  const { canAccess, error } = await canAccessLesson(lessId);
+
+  if (!canAccess) {
+    // Redirect to the most recent completed lesson or first lesson
+    // This implementation will depend on your navigation structure
+    redirect(`/courses/${courseId}`);
+  }
+
+  // Get completed lessons for sidebar
+  const { completedLessons = [] } = await getCompletedLessons(courseId);
+
   return (
     <div
       key={lessId}
       className="min-h-screen bg-gray-50 flex flex-col md:flex-row"
     >
       {/* Mobile Header - client component */}
-      <MobileHeader title={courseData.title} />
+      <MobileHeader
+        title={courseData.title}
+        course={courseData}
+        activeModuleId={modId}
+        activeLessonId={lessId}
+        commpletedLessons={completedLessons}
+      />
 
       {/* Sidebar - server pre-rendered */}
       <div className="hidden md:block w-full md:w-80 bg-white border-r overflow-y-auto">
@@ -69,13 +87,14 @@ export default async function LearnPage({ params, searchParams }) {
           course={courseData}
           activeModuleId={modId}
           activeLessonId={lessId}
+          completedLessons={completedLessons}
         />
       </div>
 
       {/* Main Content - server rendered */}
       <main className="flex-1 overflow-y-auto">
         <CourseContent
-          lesson={lessonData}
+          lesson={lessonContent}
           userId={users[0].id}
           courseId={courseId}
         />

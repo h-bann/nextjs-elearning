@@ -4,9 +4,9 @@ import { useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { completeLessonAction } from "@/lib/serverActions";
 
-export default function CompleteLessonButton({ lessonId }) {
+export default function CompleteLessonButton({ lessonId, isCompleted }) {
   const [completing, setCompleting] = useState(false);
-  const [completed, setCompleted] = useState(false);
+  const [completed, setCompleted] = useState(isCompleted);
   const [error, setError] = useState(null);
 
   const markAsComplete = async () => {

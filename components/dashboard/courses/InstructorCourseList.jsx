@@ -46,7 +46,7 @@ const CourseCard = ({ course }) => {
             Edit
           </a>
           <a
-            href={`/dashboard/courses/${course.id}`}
+            href={`/courses/${course.id}/learn`}
             className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
           >
             <Eye className="w-4 h-4 mr-2" />

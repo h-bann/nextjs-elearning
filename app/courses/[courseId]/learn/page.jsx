@@ -55,18 +55,24 @@ export default async function LearnPage({ params, searchParams }) {
   // Get current lesson content
   const lessonContent = await mySQL(getContent, [lessId]);
 
-  // Get lesson access info
-  const { canAccess, error } = await canAccessLesson(lessId);
+  // Use our fixed getCompletedLessons function, passing courseId
+  const completedLessonsResult = await getCompletedLessons(courseId);
+  const completedLessons = completedLessonsResult.completedLessons || [];
 
-  if (!canAccess) {
-    // Redirect to the most recent completed lesson or first lesson
-    // This implementation will depend on your navigation structure
-    redirect(`/courses/${courseId}`);
+  // Check if user can access this lesson
+  const accessCheck = await canAccessLesson(lessId);
+  if (!accessCheck.canAccess) {
+    // Find the first lesson or last completed lesson
+    const firstLesson = courseData.modules[0]?.lessons[0];
+    if (firstLesson) {
+      redirect(
+        `/courses/${courseId}/learn?moduleId=${courseData.modules[0].id}&lessonId=${firstLesson.id}`
+      );
+    } else {
+      redirect(`/courses/${courseId}`);
+    }
   }
-
-  // Get completed lessons for sidebar
-  const { completedLessons = [] } = await getCompletedLessons(courseId);
-
+  console.log(completedLessons);
   return (
     <div
       key={lessId}

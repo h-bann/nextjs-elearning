@@ -3,12 +3,13 @@ import CompleteLessonButton from "./CompleteLessonButton";
 import mySQL from "@/lib/database";
 import { getLessonCompletionStatus } from "@/lib/queries";
 
-export default async function CourseContent({ lesson, userId }) {
+export default async function CourseContent({ lesson, userId, courseId }) {
   const completionStatus = await mySQL(getLessonCompletionStatus, [
     lesson[0]?.lesson_id,
     userId,
   ]);
   const isCompleted = completionStatus.length > 0;
+
   if (!lesson) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -16,6 +17,7 @@ export default async function CourseContent({ lesson, userId }) {
       </div>
     );
   }
+
   return (
     <div className="mx-auto px-4 py-8">
       {/* Lesson Header */}
@@ -26,11 +28,14 @@ export default async function CourseContent({ lesson, userId }) {
             <CompleteLessonButton
               lessonId={lesson[0].lesson_id}
               isCompleted={isCompleted}
+              courseId={
+                courseId
+              } /* Pass courseId to the button in case needed */
             />
           )}
         </div>
-        {lesson.module_title && (
-          <p className="text-gray-600">Module: {lesson.module_title}</p>
+        {lesson[0].module_title && (
+          <p className="text-gray-600">Module: {lesson[0].module_title}</p>
         )}
       </div>
 
@@ -39,17 +44,23 @@ export default async function CourseContent({ lesson, userId }) {
         {lesson.map((item) => {
           switch (item.content_type) {
             case "TEXT":
-              return <p key={item.id}>{item.value}</p>;
+              return (
+                <div key={item.id} className="mb-4">
+                  {item.value.split("\n").map((paragraph, i) => (
+                    <p key={i}>{paragraph}</p>
+                  ))}
+                </div>
+              );
 
             case "IMAGE":
               return (
-                <Image
-                  key={item.id}
-                  src={item.value}
-                  alt="Lesson content"
-                  width={300}
-                  height={200}
-                />
+                <div key={item.id} className="my-6">
+                  <img
+                    src={item.value}
+                    alt="Lesson content"
+                    className="max-w-full rounded-lg shadow-md"
+                  />
+                </div>
               );
 
             default:

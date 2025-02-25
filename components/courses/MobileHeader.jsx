@@ -9,6 +9,7 @@ export default function MobileHeader({
   course,
   activeModuleId,
   activeLessonId,
+  completedLessons = [],
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -33,6 +34,7 @@ export default function MobileHeader({
           course={course}
           activeModuleId={activeModuleId}
           activeLessonId={activeLessonId}
+          completedLessons={completedLessons}
           onNavigate={() => setIsSidebarOpen(false)}
         />
       )}

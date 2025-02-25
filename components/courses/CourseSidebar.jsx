@@ -1,17 +1,28 @@
 "use client";
 import Link from "next/link";
 import { ChevronDown, ChevronUp, CheckCircle, Lock } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CourseSidebar({
   course,
   activeModuleId,
   activeLessonId,
   completedLessons = [], // Add this prop
+  onNavigate,
 }) {
   const [expandedModules, setExpandedModules] = useState({
     [activeModuleId]: true,
   });
+
+  // Automatically expand the active module
+  useEffect(() => {
+    if (activeModuleId) {
+      setExpandedModules((prev) => ({
+        ...prev,
+        [activeModuleId]: true,
+      }));
+    }
+  }, [activeModuleId]);
 
   const toggleModule = (moduleId) => {
     setExpandedModules((prev) => ({
@@ -111,12 +122,33 @@ export default function CourseSidebar({
       <div className="p-4 border-t bg-white">
         <div className="mb-2 flex justify-between text-sm">
           <span>Course Progress</span>
-          <span>{course.progress || 0}%</span>
+          <span>
+            {Math.round(
+              (completedLessons.length /
+                course.modules.reduce(
+                  (total, module) => total + module.lessons.length,
+                  0
+                )) *
+                100
+            ) || 0}
+            %
+          </span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
             className="bg-green-500 h-2 rounded-full"
-            style={{ width: `${course.progress || 0}%` }}
+            style={{
+              width: `${
+                Math.round(
+                  (completedLessons.length /
+                    course.modules.reduce(
+                      (total, module) => total + module.lessons.length,
+                      0
+                    )) *
+                    100
+                ) || 0
+              }%`,
+            }}
           />
         </div>
       </div>

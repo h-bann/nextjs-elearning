@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { completeLessonAction } from "@/lib/serverActions";
+import { useRouter } from "next/navigation";
 
 export default function CompleteLessonButton({ lessonId, isCompleted }) {
   const [completing, setCompleting] = useState(false);
   const [completed, setCompleted] = useState(isCompleted);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   const markAsComplete = async () => {
     setCompleting(true);
@@ -20,6 +22,7 @@ export default function CompleteLessonButton({ lessonId, isCompleted }) {
       }
 
       setCompleted(true);
+      router.refresh();
     } catch (err) {
       setError("Failed to mark lesson as complete");
       console.error(err);

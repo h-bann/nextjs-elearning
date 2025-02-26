@@ -54,7 +54,13 @@ export async function POST(req) {
     };
 
     const cookieStore = cookies();
-    cookieStore.set("auth_token", token, {
+    const cookieName =
+      process.env.NODE_ENV === "production"
+        ? "__Host-auth_token"
+        : "auth_token";
+    cookieStore.set({
+      name: cookieName,
+      value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",

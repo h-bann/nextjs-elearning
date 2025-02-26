@@ -1,6 +1,6 @@
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
-import { AuthProvider } from "@/lib/auth";
+import { AuthProvider } from "@/lib/clientAuth";
 
 export const metadata = {
   title: "E-Learning App",

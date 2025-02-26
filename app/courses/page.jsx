@@ -6,7 +6,7 @@ import {
   getLoggedInUser,
   getUserEnrollments,
 } from "@/lib/queries";
-import { ProtectedRoute } from "@/lib/auth";
+import { ProtectedRoute } from "@/lib/clientAuth";
 import CourseGrid from "@/components/courses/courseList/CourseGrid";
 
 async function getCoursesWithEnrollmentStatus(userId = null) {

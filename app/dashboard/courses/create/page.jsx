@@ -4,33 +4,10 @@ import { redirect } from "next/navigation";
 import mySQL from "@/lib/database";
 import { getLoggedInUser } from "@/lib/queries";
 import CourseForm from "@/components/dashboard/course-creation/CourseForm";
-
-async function getUser() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
-
-  if (!token) {
-    redirect("/auth/signin");
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const users = await mySQL(getLoggedInUser, [decoded.userId]);
-
-    const user = users[0];
-
-    if (user.role !== "instructor") {
-      redirect("/dashboard");
-    }
-
-    return user;
-  } catch (error) {
-    redirect("/auth/signin");
-  }
-}
+import { requireRole } from "@/lib/serverAuth";
 
 export default async function CreateCoursePage() {
-  const user = await getUser();
+  const user = await requireRole("instructor");
 
   return (
     <div className="max-w-4xl mx-auto">

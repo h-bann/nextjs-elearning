@@ -2,8 +2,8 @@
 import mySQL from "@/lib/database";
 import { getUser } from "@/lib/queries";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { createToken } from "@/lib/jwt";
 
 export async function POST(req) {
   try {
@@ -20,7 +20,7 @@ export async function POST(req) {
     // Get user from database
     const users = await mySQL(getUser, [email]);
     const user = users[0];
-    console.log(user);
+
     if (!user) {
       return Response.json(
         { message: "Invalid credentials" },
@@ -42,29 +42,23 @@ export async function POST(req) {
       );
     }
 
-    // Create JWT token
-    const token = jwt.sign(
-      {
-        userId: user.user_id,
-        email: user.email,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    // Create JWT token with centralied utility
+    const token = createToken(user);
 
     // Prepare user data (excluding sensitive information)
     const userData = {
       userId: user.user_id,
       username: user.username,
       email: user.email,
+      role: user.role,
     };
 
-    const cookieStore = await cookies();
+    const cookieStore = cookies();
     cookieStore.set("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+      maxAge: 24 * 60 * 60, // 24 hours in seconds
       path: "/",
     });
 

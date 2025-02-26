@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { AlertCircle } from "lucide-react";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/clientAuth";
 import { useRouter } from "next/navigation";
 
 const SignInForm = () => {

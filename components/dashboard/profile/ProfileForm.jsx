@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { User, Mail, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/clientAuth";
 
 export default function ProfileForm({ user }) {
   const [formData, setFormData] = useState({

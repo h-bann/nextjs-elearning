@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/clientAuth";
 import { AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 

@@ -22,8 +22,8 @@ const Navbar = () => {
   const menuItems = [
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
+    // { label: "About", href: "/about" },
+    // { label: "Contact", href: "/contact" },
   ];
 
   // If user is logged in, add dashboard to menu items

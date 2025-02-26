@@ -1,5 +1,4 @@
-// app/courses/loading.jsx
-import CourseCardSkeleton from "@/components/courses/CourseCardSkeleton";
+import CourseCardSkeleton from "@/components/courses/courseList/CourseCardSkeleton";
 
 export default function Loading() {
   return (

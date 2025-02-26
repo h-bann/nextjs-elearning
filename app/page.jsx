@@ -1,4 +1,3 @@
-// import { query } from "@/lib/queries";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Users, Clock } from "lucide-react";
 

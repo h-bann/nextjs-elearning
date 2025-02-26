@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
-import CourseGrid from "@/components/courses/CourseGrid";
 import {
   getAllCourses,
   getLoggedInUser,
   getUserEnrollments,
 } from "@/lib/queries";
 import { ProtectedRoute } from "@/lib/auth";
+import CourseGrid from "@/components/courses/courseList/CourseGrid";
 
 async function getCoursesWithEnrollmentStatus(userId = null) {
   const courses = await mySQL(getAllCourses);

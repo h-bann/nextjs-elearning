@@ -38,7 +38,7 @@ async function getEnrolledCourses(userId) {
 
 export default async function CoursesPage() {
   const user = await getUser();
-  console.log(user);
+
   if (user.role === "instructor") {
     const courses = await getInstructorCourses(user.id);
     return <InstructorCourseList courses={courses} />;

@@ -9,9 +9,9 @@ import {
   getContent,
 } from "@/lib/queries";
 import { getCourseAndModules } from "@/lib/utils";
-import CourseSidebar from "@/components/courses/CourseSidebar";
-import CourseContent from "@/components/courses/CourseContent";
-import MobileHeader from "@/components/courses/MobileHeader";
+import CourseSidebar from "@/components/courses/courseContent/CourseSidebar";
+import CourseContent from "@/components/courses/courseContent/CourseContent";
+import MobileHeader from "@/components/courses/courseContent/MobileHeader";
 import { getCompletedLessons, canAccessLesson } from "@/lib/serverActions";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
 

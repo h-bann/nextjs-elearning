@@ -1,13 +1,7 @@
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
-import {
-  getAllCourses,
-  getLoggedInUser,
-  getUserEnrollments,
-} from "@/lib/queries";
-import { ProtectedRoute } from "@/lib/clientAuth";
+import { getAllCourses, getUserEnrollments } from "@/lib/queries";
 import CourseGrid from "@/components/courses/courseList/CourseGrid";
+import { getServerSession } from "@/lib/serverAuth";
 
 async function getCoursesWithEnrollmentStatus(userId = null) {
   const courses = await mySQL(getAllCourses);
@@ -27,28 +21,18 @@ async function getCoursesWithEnrollmentStatus(userId = null) {
 }
 
 export default async function CoursesPage() {
-  let userId = null;
+  const user = await getServerSession();
 
-  // Check if user is logged in
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
-
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const users = await mySQL(getLoggedInUser, [decoded.userId]);
-      if (users.length) {
-        userId = users[0].id;
-      }
-    } catch (error) {
-      console.error("Token verification failed:", error);
-    }
+  if (!user) {
+    redirect("/auth/signin?redirect=/dashboard");
+    return null;
   }
-  const courses = await getCoursesWithEnrollmentStatus(userId);
+
+  const courses = await getCoursesWithEnrollmentStatus(user.id);
   console.log(courses);
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Available Courses</h1>
+      <h1 className="mb-8 text-3xl font-bold">Available Courses</h1>
 
       <CourseGrid courses={courses} />
     </div>

@@ -1,13 +1,8 @@
 import StatCard from "./StatsCard";
 import { BookOpen, Clock, Trophy, Users } from "lucide-react";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
-import {
-  getCourseStats,
-  getInstructorStudentStats,
-  getLoggedInUser,
-} from "@/lib/queries";
+import { getCourseStats, getInstructorStudentStats } from "@/lib/queries";
 import mySQL from "@/lib/database";
+import { getServerSession } from "@/lib/serverAuth";
 
 async function getInstructorStats(userId) {
   const courseStats = await mySQL(getCourseStats, [userId]);
@@ -18,9 +13,13 @@ async function getInstructorStats(userId) {
     courseCompletions: studentStats[0]?.course_completions || 0,
   };
 }
+
 export default async function InstructorDashboard() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
+  const user = await getServerSession();
+  if (!user) {
+    redirect("/auth/signin?redirect=/dashboard");
+    return null;
+  }
 
   let stats = {
     totalCourses: 0,
@@ -28,23 +27,12 @@ export default async function InstructorDashboard() {
     courseCompletions: 0,
   };
 
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const users = await mySQL(getLoggedInUser, [decoded.userId]);
-      const user = users[0];
+  stats = await getInstructorStats(user.id);
 
-      if (user) {
-        stats = await getInstructorStats(user.id);
-      }
-    } catch (error) {
-      console.error("Authentication error:", error);
-    }
-  }
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">My Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <h1 className="mb-6 text-2xl font-bold">My Dashboard</h1>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
           icon={BookOpen}
           label="Total Courses"

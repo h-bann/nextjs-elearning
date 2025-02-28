@@ -38,8 +38,8 @@ export default async function StudentDashboard() {
   }
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">My Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <h1 className="mb-6 text-2xl font-bold">My Dashboard</h1>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
           icon={BookOpen}
           label="Enrolled Courses"
@@ -59,8 +59,8 @@ export default async function StudentDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <h2 className="text-xl font-semibold mt-8 mb-4">Recent Activity</h2>
-      <div className="bg-white rounded-lg shadow-sm">
+      <h2 className="mb-4 mt-8 text-xl font-semibold">Recent Activity</h2>
+      <div className="rounded-lg bg-white shadow-sm">
         {/* Add recent activity list here */}
       </div>
     </div>

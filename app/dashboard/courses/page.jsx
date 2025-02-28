@@ -1,30 +1,9 @@
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import StudentCourseList from "@/components/dashboard/courses/StudentCourseList";
 import InstructorCourseList from "@/components/dashboard/courses/InstructorCourseList";
 import mySQL from "@/lib/database";
-import {
-  getEnrolledCourse,
-  getInstructorCourse,
-  getLoggedInUser,
-} from "@/lib/queries";
+import { getEnrolledCourse, getInstructorCourse } from "@/lib/queries";
 import { redirect } from "next/navigation";
-
-async function getUser() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
-  if (!token) {
-    redirect("/auth/signin");
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const users = await mySQL(getLoggedInUser, [decoded.userId]);
-    return users[0];
-  } catch (error) {
-    redirect("/auth/signin");
-  }
-}
+import { getServerSession } from "@/lib/serverAuth";
 
 async function getInstructorCourses(userId) {
   const courses = await mySQL(getInstructorCourse, [userId]);
@@ -37,7 +16,11 @@ async function getEnrolledCourses(userId) {
 }
 
 export default async function CoursesPage() {
-  const user = await getUser();
+  const user = await getServerSession();
+  if (!user) {
+    redirect("/auth/signin?redirect=/dashboard");
+    return null;
+  }
 
   if (user.role === "instructor") {
     const courses = await getInstructorCourses(user.id);

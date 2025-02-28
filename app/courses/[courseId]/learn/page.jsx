@@ -1,13 +1,7 @@
-// app/courses/[courseId]/learn/page.jsx
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import { getServerSession } from "@/lib/serverAuth";
 import mySQL from "@/lib/database";
 import { redirect } from "next/navigation";
-import {
-  getLoggedInUser,
-  checkExistingEnrollment,
-  getContent,
-} from "@/lib/queries";
+import { checkExistingEnrollment, getContent } from "@/lib/queries";
 import { getCourseAndModules } from "@/lib/utils";
 import CourseSidebar from "@/components/courses/courseContent/CourseSidebar";
 import CourseContent from "@/components/courses/courseContent/CourseContent";
@@ -23,29 +17,17 @@ export const revalidate = 0;
 export default async function LearnPage({ params, searchParams }) {
   const { courseId } = await params;
   const { moduleId, lessonId } = await searchParams;
+  const user = await getServerSession();
+  if (!user) {
+    redirect("/auth/signin?redirect=/dashboard");
+    return null;
+  }
 
   // Add a timestamp parameter to ensure fresh data on each request
   const timestamp = Date.now();
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
-
-  if (!token) {
-    redirect("/auth/signin");
-  }
-
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const users = await mySQL(getLoggedInUser, [decoded.userId]);
-
-  if (!users.length) {
-    redirect("/auth/signin");
-  }
-
   // Check enrollment
-  const enrollments = await mySQL(checkExistingEnrollment, [
-    users[0].id,
-    courseId,
-  ]);
+  const enrollments = await mySQL(checkExistingEnrollment, [user.id, courseId]);
   if (!enrollments.length || enrollments[0].status !== "ACTIVE") {
     redirect("/courses");
   }
@@ -74,7 +56,7 @@ export default async function LearnPage({ params, searchParams }) {
     const firstLesson = courseData.modules[0]?.lessons[0];
     if (firstLesson) {
       redirect(
-        `/courses/${courseId}/learn?moduleId=${courseData.modules[0].id}&lessonId=${firstLesson.id}`
+        `/courses/${courseId}/learn?moduleId=${courseData.modules[0].id}&lessonId=${firstLesson.id}`,
       );
     } else {
       redirect(`/courses/${courseId}`);
@@ -88,7 +70,7 @@ export default async function LearnPage({ params, searchParams }) {
     >
       <div
         key={`${lessId}-${timestamp}`}
-        className="flex flex-col md:flex-row h-[calc(100vh-4rem)] overflow-hidden bg-white"
+        className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden bg-white md:flex-row"
       >
         {/* Mobile Header */}
         <MobileHeader
@@ -99,7 +81,7 @@ export default async function LearnPage({ params, searchParams }) {
         />
 
         {/* Sidebar - hidden on mobile */}
-        <div className="hidden md:block w-full md:w-80 bg-white border-r h-full overflow-y-auto">
+        <div className="hidden h-full w-full overflow-y-auto border-r bg-white md:block md:w-80">
           <CourseSidebar
             course={courseData}
             activeModuleId={modId}
@@ -111,7 +93,7 @@ export default async function LearnPage({ params, searchParams }) {
         <main className="flex-1 overflow-y-auto">
           <CourseContent
             lesson={lessonContent}
-            userId={users[0].id}
+            userId={user.id}
             courseId={courseId}
           />
         </main>

@@ -68,19 +68,19 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+      <section className="bg-gradient-to-r from-blue-600 to-blue-800 py-20 text-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="mb-6 text-4xl font-bold md:text-5xl">
               Transform Your Future with Online Learning
             </h1>
-            <p className="text-xl mb-8">
+            <p className="mb-8 text-xl">
               Access high-quality courses from expert instructors and take your
               skills to the next level
             </p>
             <Link
               href="/courses"
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+              className="rounded-lg bg-white px-8 py-3 font-semibold text-blue-600 transition-colors hover:bg-blue-50"
             >
               Explore Courses
             </Link>
@@ -89,20 +89,20 @@ export default async function HomePage() {
       </section>
 
       {/* Featured Courses Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="mb-12 text-center text-3xl font-bold">
             Featured Courses
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {/* {featuredCourses.map((course) => (
               <FeaturedCourseCard key={course.id} course={course} />
             ))} */}
           </div>
-          <div className="text-center mt-12">
+          <div className="mt-12 text-center">
             <Link
               href="/courses"
-              className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold"
+              className="inline-flex items-center gap-2 font-semibold text-blue-600 hover:text-blue-800"
             >
               View all courses <ArrowRight size={16} />
             </Link>
@@ -113,10 +113,10 @@ export default async function HomePage() {
       {/* Features Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="mb-12 text-center text-3xl font-bold">
             Why Choose Us
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* {features.map((feature, index) => (
               <FeatureBox key={index} {...feature} />
             ))} */}
@@ -127,14 +127,14 @@ export default async function HomePage() {
       {/* CTA Section */}
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Start Learning?</h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+          <h2 className="mb-6 text-3xl font-bold">Ready to Start Learning?</h2>
+          <p className="mx-auto mb-8 max-w-2xl text-gray-600">
             Join thousands of students who are already learning and growing with
             our platform.
           </p>
           <Link
             href="/auth/signup"
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="rounded-lg bg-blue-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
           >
             Get Started
           </Link>

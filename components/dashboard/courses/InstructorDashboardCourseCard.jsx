@@ -2,16 +2,16 @@ import { Users, DollarSign, FileEdit, Eye } from "lucide-react";
 
 export default function CourseCard({ course }) {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="h-48 relative">
+    <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="relative h-48">
         <img
           src={course.image_url || "/api/placeholder/400/300"}
           alt={course.title}
-          className="w-full h-full object-cover"
+          className="h-full w-full object-cover"
         />
-        <div className="absolute top-2 right-2">
+        <div className="absolute right-2 top-2">
           <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
               course.published
                 ? "bg-green-100 text-green-800"
                 : "bg-yellow-100 text-yellow-800"
@@ -22,12 +22,12 @@ export default function CourseCard({ course }) {
         </div>
       </div>
       <div className="p-6">
-        <h3 className="font-semibold text-lg mb-2">{course.title}</h3>
+        <h3 className="mb-2 text-lg font-semibold">{course.title}</h3>
 
         {/* Course Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="mb-4 grid grid-cols-2 gap-4">
           <div className="flex items-center text-gray-600">
-            <Users className="w-4 h-4 mr-2" />
+            <Users className="mr-2 h-4 w-4" />
             <span className="text-sm">{course.student_count} students</span>
           </div>
           <div className="flex items-center text-gray-600">
@@ -39,16 +39,16 @@ export default function CourseCard({ course }) {
         <div className="grid grid-cols-2 gap-2">
           <a
             href={`/dashboard/courses/${course.id}/edit`}
-            className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            <FileEdit className="w-4 h-4 mr-2" />
+            <FileEdit className="mr-2 h-4 w-4" />
             Edit
           </a>
           <a
             href={`/courses/${course.id}/learn`}
-            className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+            className="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
-            <Eye className="w-4 h-4 mr-2" />
+            <Eye className="mr-2 h-4 w-4" />
             View
           </a>
         </div>

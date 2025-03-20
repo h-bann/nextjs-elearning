@@ -2,6 +2,7 @@ import mySQL from "@/lib/database";
 import { getAllCourses, getUserEnrollments } from "@/lib/queries";
 import CourseGrid from "@/components/courses/courseList/CourseGrid";
 import { getServerSession } from "@/lib/serverAuth";
+import { redirect } from "next/navigation";
 
 async function getCoursesWithEnrollmentStatus(userId = null) {
   const courses = await mySQL(getAllCourses);
@@ -23,12 +24,8 @@ async function getCoursesWithEnrollmentStatus(userId = null) {
 export default async function CoursesPage() {
   const user = await getServerSession();
 
-  if (!user) {
-    redirect("/auth/signin?redirect=/dashboard");
-    return null;
-  }
+  const courses = await getCoursesWithEnrollmentStatus(user?.id);
 
-  const courses = await getCoursesWithEnrollmentStatus(user.id);
   console.log(courses);
   return (
     <div className="container mx-auto px-4 py-8">

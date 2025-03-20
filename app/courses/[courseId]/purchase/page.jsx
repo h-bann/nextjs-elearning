@@ -28,7 +28,7 @@ export default async function PurchasePage({ params }) {
   const user = await getServerSession();
 
   if (!user) {
-    redirect("/auth/signin?redirect=/dashboard");
+    redirect("/auth/signup?redirect=/dashboard");
     return null;
   }
 

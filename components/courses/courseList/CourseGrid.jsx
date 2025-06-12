@@ -1,7 +1,11 @@
 // components/courses/courseList/CourseGrid.jsx
 import CourseCard from "./CourseCard";
 
-export default function CourseGrid({ courses, userVerified = false }) {
+export default function CourseGrid({
+  courses,
+  userVerified = false,
+  userRole = null,
+}) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
       {courses.map((course) => (
@@ -9,6 +13,7 @@ export default function CourseGrid({ courses, userVerified = false }) {
           key={course.id}
           course={course}
           userVerified={userVerified}
+          userRole={userRole}
         />
       ))}
     </div>

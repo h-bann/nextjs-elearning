@@ -1,11 +1,20 @@
+// components/dashboard/profile/DataExport.jsx
 "use client";
 import { useState } from "react";
-import { Download, FileText, Shield, Clock, AlertCircle } from "lucide-react";
+import {
+  Download,
+  FileText,
+  Shield,
+  Clock,
+  AlertCircle,
+  GraduationCap,
+} from "lucide-react";
 
-export default function DataExportSection() {
+export default function DataExportSection({ userRole = null }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const isInstructor = userRole === "instructor";
 
   const handleExportData = async () => {
     setLoading(true);
@@ -52,11 +61,13 @@ export default function DataExportSection() {
         <Download className="mt-1 h-6 w-6 flex-shrink-0 text-blue-500" />
         <div className="flex-1">
           <h3 className="mb-2 text-lg font-medium text-blue-900">
-            Download Your Learning Report
+            Download Your {isInstructor ? "Teaching & Learning" : "Learning"}{" "}
+            Report
           </h3>
           <p className="mb-4 text-sm text-blue-700">
-            Get a comprehensive report of your course purchases, learning
-            progress, and personal data.
+            {isInstructor
+              ? "Get a comprehensive report of your instructor profile, courses created, student enrollments, and learning progress."
+              : "Get a comprehensive report of your course purchases, learning progress, and personal data."}
           </p>
 
           <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3">
@@ -67,7 +78,8 @@ export default function DataExportSection() {
                   Security Notice
                 </p>
                 <p className="mt-1 text-xs text-amber-700">
-                  Your report contains sensitive personal information. Please
+                  Your report contains sensitive personal
+                  {isInstructor ? " and professional" : ""} information. Please
                   store it securely and delete it when no longer needed.
                 </p>
               </div>

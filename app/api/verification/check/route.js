@@ -24,7 +24,7 @@ export async function GET(req) {
 
     // Check if user has OneId verification
     const verificationData = await mySQL(
-      `SELECT oneid_verified, oneid_verification_date, oneid_verification_data 
+      `SELECT oneid_verified, oneid_verification_date, oneid_verification_data, role 
        FROM users 
        WHERE user_id = ?`,
       [user.user_id],
@@ -32,14 +32,21 @@ export async function GET(req) {
 
     const userVerification = verificationData[0];
 
+    // Instructors are considered "verified" for purchase purposes
+    const isVerified =
+      !!userVerification.oneid_verified ||
+      userVerification.role === "instructor";
+
     return Response.json({
-      verified: !!userVerification.oneid_verified,
+      verified: isVerified,
       verification_date: userVerification.oneid_verification_date,
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
+        role: userVerification.role,
         oneid_verified: !!userVerification.oneid_verified,
+        is_instructor: userVerification.role === "instructor",
       },
     });
   } catch (error) {

@@ -26,6 +26,7 @@ export default async function StudentDashboard() {
   };
 
   let userId = null;
+  let userRole = null;
 
   if (token) {
     try {
@@ -35,6 +36,7 @@ export default async function StudentDashboard() {
 
       if (user) {
         userId = user.id;
+        userRole = user.role;
         stats = await getStudentStats(user.id);
       }
     } catch (error) {
@@ -42,13 +44,17 @@ export default async function StudentDashboard() {
     }
   }
 
+  const isInstructor = userRole === "instructor";
+
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">My Dashboard</h1>
+      <h1 className="mb-6 text-2xl font-bold">
+        My {isInstructor ? "Instructor" : "Learning"} Dashboard
+      </h1>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <StatCard
           icon={BookOpen}
-          label="Enrolled Courses"
+          label={isInstructor ? "Courses As Student" : "Enrolled Courses"}
           value={stats.enrolledCourses}
         />
         <StatCard
@@ -61,6 +67,45 @@ export default async function StudentDashboard() {
       {/* Recent Activity */}
       <h2 className="mb-4 mt-8 text-xl font-semibold">Recent Activity</h2>
       <RecentActivity userId={userId} />
+
+      {/* Note for instructors who also learn */}
+      {isInstructor && stats.enrolledCourses > 0 && (
+        <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-blue-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-blue-800">
+                Learning & Teaching
+              </h3>
+              <div className="mt-1 text-sm text-blue-700">
+                <p>
+                  This shows your activity as a student. To view your instructor
+                  dashboard with course creation and student management,
+                  <a
+                    href="/dashboard/courses"
+                    className="font-medium underline hover:no-underline"
+                  >
+                    visit your instructor courses
+                  </a>
+                  .
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

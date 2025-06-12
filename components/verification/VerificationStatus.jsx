@@ -1,8 +1,14 @@
 // components/verification/VerificationStatus.jsx
-import { Shield, CheckCircle, AlertCircle } from "lucide-react";
+import { Shield, CheckCircle, AlertCircle, GraduationCap } from "lucide-react";
 
 export default function VerificationStatus({ user, verificationData }) {
   const isVerified = user.oneid_verified;
+  const isInstructor = user.role === "instructor";
+
+  // Don't render anything for instructors
+  if (isInstructor) {
+    return null;
+  }
 
   return (
     <div className="rounded-lg bg-white p-6 shadow">

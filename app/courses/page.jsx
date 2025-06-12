@@ -8,20 +8,20 @@ async function getCoursesWithEnrollmentStatus(userId = null) {
   const courses = await mySQL(getAllCourses);
 
   if (!userId) {
-    return { courses, userVerified: false };
+    return { courses, userVerified: false, userRole: null };
   }
 
   // Get user's enrollments
   const enrollments = await mySQL(getUserEnrollments, [userId]);
   const enrolledCourseIds = enrollments.map((e) => e.course_id);
 
-  // Get user's verification status
-  const verificationData = await mySQL(
-    `SELECT oneid_verified FROM users WHERE id = ?`,
+  // Get user's verification status and role
+  const userData = await mySQL(
+    `SELECT oneid_verified, role FROM users WHERE id = ?`,
     [userId],
   );
-  const userVerified =
-    verificationData.length > 0 && verificationData[0].oneid_verified;
+  const userVerified = userData.length > 0 && userData[0].oneid_verified;
+  const userRole = userData.length > 0 ? userData[0].role : null;
 
   // Add enrollment status to courses
   const coursesWithStatus = courses.map((course) => ({
@@ -29,21 +29,24 @@ async function getCoursesWithEnrollmentStatus(userId = null) {
     isEnrolled: enrolledCourseIds.includes(course.id),
   }));
 
-  return { courses: coursesWithStatus, userVerified };
+  return { courses: coursesWithStatus, userVerified, userRole };
 }
 
 export default async function CoursesPage() {
   const user = await getServerSession();
-  const { courses, userVerified } = await getCoursesWithEnrollmentStatus(
-    user?.id,
-  );
+  const { courses, userVerified, userRole } =
+    await getCoursesWithEnrollmentStatus(user?.id);
+
+  // Don't show verification notice for instructors
+  const shouldShowVerificationNotice =
+    user && !userVerified && userRole !== "instructor";
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 text-3xl font-bold">Available Courses</h1>
 
-      {/* Age Verification Notice */}
-      {user && !userVerified && (
+      {/* Age Verification Notice - Only for non-instructor users */}
+      {shouldShowVerificationNotice && (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0">
@@ -82,7 +85,11 @@ export default async function CoursesPage() {
         </div>
       )}
 
-      <CourseGrid courses={courses} userVerified={userVerified} />
+      <CourseGrid
+        courses={courses}
+        userVerified={userVerified}
+        userRole={userRole}
+      />
     </div>
   );
 }

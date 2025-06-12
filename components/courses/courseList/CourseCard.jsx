@@ -5,10 +5,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp, Shield } from "lucide-react";
 
-export default function CourseCard({ course, userVerified = false }) {
+export default function CourseCard({
+  course,
+  userVerified = false,
+  userRole = null,
+}) {
   const [showDescription, setShowDescription] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
+
+  // Instructors don't need age verification
+  const needsVerification = userRole !== "instructor" && !userVerified;
 
   const handleCourseClick = async () => {
     if (!course.isEnrolled) {
@@ -59,7 +66,7 @@ export default function CourseCard({ course, userVerified = false }) {
             Enrolled
           </div>
         )}
-        {!course.isEnrolled && !userVerified && (
+        {!course.isEnrolled && needsVerification && (
           <div className="absolute left-2 top-2 flex items-center rounded bg-amber-500 px-2 py-1 text-xs text-white">
             <Shield className="mr-1 h-3 w-3" />
             18+ Verification Required
@@ -102,8 +109,8 @@ export default function CourseCard({ course, userVerified = false }) {
           <p className="mb-4 text-gray-600">{course.description}</p>
         </div>
 
-        {/* Age Verification Notice */}
-        {!course.isEnrolled && !userVerified && (
+        {/* Age Verification Notice - Only show for non-instructors */}
+        {!course.isEnrolled && needsVerification && (
           <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3">
             <div className="flex items-start">
               <Shield className="mr-2 mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />

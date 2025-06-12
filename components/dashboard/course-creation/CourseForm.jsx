@@ -52,7 +52,7 @@ export default function CourseForm({ instructorId }) {
         imageUrl = url;
       }
       // Create course
-      const response = await fetch("/api/courses/course-creation", {
+      const response = await fetch("/api/courses/course-editing", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,19 +79,19 @@ export default function CourseForm({ instructorId }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
+    <form onSubmit={handleSubmit} className="rounded-lg bg-white p-6 shadow">
       {error && (
-        <div className="mb-4 p-4 text-red-700 bg-red-100 rounded-md">
+        <div className="mb-4 rounded-md bg-red-100 p-4 text-red-700">
           {error}
         </div>
       )}
 
       {/* Image Upload */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="mb-2 block text-sm font-medium text-gray-700">
           Course Thumbnail
         </label>
-        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+        <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pb-6 pt-5">
           <div className="space-y-1 text-center">
             {imagePreview ? (
               <div className="mb-4">
@@ -105,7 +105,7 @@ export default function CourseForm({ instructorId }) {
               <Upload className="mx-auto h-12 w-12 text-gray-400" />
             )}
             <div className="flex text-sm text-gray-600">
-              <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+              <label className="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500">
                 <span>Upload a file</span>
                 <input
                   type="file"
@@ -124,7 +124,7 @@ export default function CourseForm({ instructorId }) {
       {/* Basic Info */}
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Course Title
           </label>
           <input
@@ -134,13 +134,13 @@ export default function CourseForm({ instructorId }) {
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full rounded-md border border-gray-300 px-3 py-2"
             placeholder="e.g., Introduction to Web Development"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Description
           </label>
           <textarea
@@ -150,14 +150,14 @@ export default function CourseForm({ instructorId }) {
               setFormData({ ...formData, description: e.target.value })
             }
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full rounded-md border border-gray-300 px-3 py-2"
             placeholder="Provide a detailed description of your course"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Price (£)
             </label>
             <input
@@ -169,7 +169,7 @@ export default function CourseForm({ instructorId }) {
               onChange={(e) =>
                 setFormData({ ...formData, price: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full rounded-md border border-gray-300 px-3 py-2"
               placeholder="29.99"
             />
           </div>
@@ -227,18 +227,18 @@ export default function CourseForm({ instructorId }) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center"
+          className="flex items-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
         >
           {loading ? (
             <>
-              <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" />
+              <Loader2 className="-ml-1 mr-2 h-5 w-5 animate-spin" />
               Creating...
             </>
           ) : (

@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
 import { getLoggedInUser } from "@/lib/queries";
-import { uploadToS3 } from "@/lib/imageUpload";
+import { uploadToS3 } from "@/lib/fileUpload";
 import sharp from "sharp";
 
 // ! IMAGE UPLOAD ROUTE
@@ -25,7 +25,8 @@ export async function POST(req) {
     const lessonTitle = formData.get("lessonTitle")?.replace(/\s+/g, "_") || "";
     const courseName = formData.get("title")?.replace(/\s+/g, "_") || "";
     const moduleId = formData.get("moduleId") || null;
-
+    console.log(file);
+    console.log(moduleId);
     if (!file) {
       return Response.json({ message: "No file provided" }, { status: 400 });
     }
@@ -49,7 +50,10 @@ export async function POST(req) {
       .webp({ quality: 100 })
       .toBuffer();
 
-    const fileKey = `${folderPath}/${moduleId}-${lessonTitle}.webp`;
+    const fileKey = moduleId
+      ? `${folderPath}/${moduleId}-${lessonTitle}.webp`
+      : `${folderPath}/coverImage.webp`;
+
     const fileUrl = await uploadToS3(optimisedBuffer, fileKey, bucketName);
 
     // Return the URL for the uploaded image
@@ -58,7 +62,7 @@ export async function POST(req) {
         message: "Image uploaded successfully",
         url: fileUrl,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Upload error:", error);

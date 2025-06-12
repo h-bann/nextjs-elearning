@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
 import {
   LayoutDashboard,
   BookOpen,
@@ -39,11 +38,6 @@ export default function ResponsiveSidebar({ user }) {
       icon: User,
       label: "Profile",
       href: "/dashboard/profile",
-    },
-    {
-      icon: Settings,
-      label: "Settings",
-      href: "/dashboard/settings",
     },
   ];
   return (
@@ -116,7 +110,7 @@ export default function ResponsiveSidebar({ user }) {
               <a
                 key={item.href}
                 href={item.href}
-                className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                className="flex items-center space-x-3 px-4 py-3 text-black hover:text-accent"
                 onClick={() => setIsDropdownOpen(false)}
               >
                 <item.icon size={20} />

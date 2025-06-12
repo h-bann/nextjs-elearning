@@ -22,8 +22,7 @@ export default function ModuleManager({ course, addModule }) {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState("");
-  // console.log("COURSE", course);
-  console.log("MODULEMANAGER", modules);
+
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -82,7 +81,7 @@ export default function ModuleManager({ course, addModule }) {
             title: formData.get("title"),
             order_index: formData.get("order_index"),
           }),
-        }
+        },
       );
       const newModule = await response.json();
 
@@ -105,7 +104,7 @@ export default function ModuleManager({ course, addModule }) {
     if (!confirm("Are you sure you want to delete this module?")) return;
 
     try {
-      await fetch(`/api/courses/${id}/modules/${moduleId}`, {
+      await fetch(`/api/courses/course-editing/${id}/modules/${moduleId}`, {
         method: "DELETE",
       });
 
@@ -116,9 +115,9 @@ export default function ModuleManager({ course, addModule }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow text-black">
+    <div className="rounded-lg bg-white text-black shadow">
       {error && (
-        <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-md">
+        <div className="mb-4 rounded-md bg-red-100 p-4 text-red-700">
           {error}
         </div>
       )}
@@ -146,7 +145,7 @@ export default function ModuleManager({ course, addModule }) {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <span {...provided.dragHandleProps}>
-                            <Grip className="w-5 h-5 text-gray-400" />
+                            <Grip className="h-5 w-5 text-gray-400" />
                           </span>
                           <h3 className="text-lg font-medium">
                             {module.title}
@@ -158,16 +157,16 @@ export default function ModuleManager({ course, addModule }) {
                             className="p-2 text-gray-500 hover:text-gray-700"
                           >
                             {expandedModules[module.id] ? (
-                              <ChevronUp className="w-5 h-5" />
+                              <ChevronUp className="h-5 w-5" />
                             ) : (
-                              <ChevronDown className="w-5 h-5" />
+                              <ChevronDown className="h-5 w-5" />
                             )}
                           </button>
                           <button
                             onClick={() => handleDeleteModule(module.id)}
                             className="p-2 text-red-500 hover:text-red-700"
                           >
-                            <Trash className="w-5 h-5" />
+                            <Trash className="h-5 w-5" />
                           </button>
                         </div>
                       </div>
@@ -192,13 +191,13 @@ export default function ModuleManager({ course, addModule }) {
         </Droppable>
       </DragDropContext>
 
-      <div className="p-4 border-t border-gray-200">
+      <div className="border-t border-gray-200 p-4">
         {isModalOpen ? (
           <form onSubmit={handleAddModule} className="space-y-4">
             <div>
               <label
                 htmlFor="moduleTitle"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="mb-1 block text-sm font-medium text-gray-700"
               >
                 Module Title
               </label>
@@ -207,7 +206,7 @@ export default function ModuleManager({ course, addModule }) {
                 type="text"
                 value={newModuleTitle}
                 onChange={(e) => setNewModuleTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter module title"
                 required
               />
@@ -219,20 +218,20 @@ export default function ModuleManager({ course, addModule }) {
                   setIsModalOpen(false);
                   setNewModuleTitle("");
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                className="flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
               >
                 {loading ? (
                   "Adding..."
                 ) : (
                   <>
-                    <Plus className="w-5 h-5 mr-2" />
+                    <Plus className="mr-2 h-5 w-5" />
                     Add Module
                   </>
                 )}
@@ -242,9 +241,9 @@ export default function ModuleManager({ course, addModule }) {
         ) : (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            <Plus className="w-5 h-5 mr-2" />
+            <Plus className="mr-2 h-5 w-5" />
             Add Module
           </button>
         )}

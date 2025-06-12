@@ -1,9 +1,11 @@
+// components/dashboard/StudentDashboard.jsx
 import mySQL from "@/lib/database";
 import StatCard from "./StatsCard";
-import { BookOpen, Clock, Trophy, Users } from "lucide-react";
+import { BookOpen, Trophy } from "lucide-react";
 import { getLoggedInUser, getStudentStat } from "@/lib/queries";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import RecentActivity from "./RecentActivity";
 
 async function getStudentStats(userId) {
   const data = await mySQL(getStudentStat, [userId]);
@@ -20,9 +22,11 @@ export default async function StudentDashboard() {
 
   let stats = {
     enrolledCourses: 0,
-    hoursLearned: 0,
     completedCourses: 0,
   };
+
+  let userId = null;
+
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -30,27 +34,23 @@ export default async function StudentDashboard() {
       const user = users[0];
 
       if (user) {
+        userId = user.id;
         stats = await getStudentStats(user.id);
       }
     } catch (error) {
       console.error("Authentication error:", error);
     }
   }
+
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">My Dashboard</h1>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <StatCard
           icon={BookOpen}
           label="Enrolled Courses"
           value={stats.enrolledCourses}
         />
-        {/* <StatCard
-          icon={Clock}
-          label="Hours Learned"
-          value={stats.hoursLearned}
-          change={5}
-        /> */}
         <StatCard
           icon={Trophy}
           label="Completed Courses"
@@ -60,9 +60,7 @@ export default async function StudentDashboard() {
 
       {/* Recent Activity */}
       <h2 className="mb-4 mt-8 text-xl font-semibold">Recent Activity</h2>
-      <div className="rounded-lg bg-white shadow-sm">
-        {/* Add recent activity list here */}
-      </div>
+      <RecentActivity userId={userId} />
     </div>
   );
 }

@@ -8,9 +8,10 @@ export function middleware(request) {
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' data: https://schoolforsubmissives.lon1.digitaloceanspaces.com;
-    font-src 'self';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com;
+    img-src 'self' data: https://${process.env.DO_SPACES_NAME}.${process.env.DO_SPACES_REGION}.digitaloceanspaces.com;
+    media-src 'self' data: https://${process.env.DO_SPACES_NAME}.${process.env.DO_SPACES_REGION}.digitaloceanspaces.com;
+    font-src 'self' https://fonts.gstatic.com;
     connect-src 'self';
     frame-src 'self';
     object-src 'none';
@@ -33,7 +34,7 @@ export function middleware(request) {
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
     "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()"
+    "camera=(), microphone=(), geolocation=()",
   );
 
   return response;

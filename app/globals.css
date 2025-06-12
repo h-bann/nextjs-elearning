@@ -1,21 +1,370 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Libre+Baskerville:wght@400;700&family=Lora:ital,wght@0,500;1,500&family=Raleway:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f7f4;
+  --foreground: #011c2d;
+
+  --color-navy: #011c2d;
+  --color-navy-light: #022d48;
+  --color-navy-dark: #011525;
+
+  --color-offwhite: #f5f7f4;
+  --color-offwhite-dark: #e6e8e5;
+  --color-offwhite-darker: #d7d9d6;
+
+  --color-berry: #b42c51;
+  --color-berry-light: #c93a61;
+  --color-berry-dark: #9d1f43;
+
+  --color-taupe: #d5ba90;
+  --color-taupe-light: #e0caa6;
+  --color-taupe-dark: #c4a678;
+
+  --font-heading: "Fraunces", serif;
+  --font-body: "Raleway", sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading) !important;
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+li {
+  font-family: var(--font-body) !important;
+}
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Manual color overrides that don't rely on @apply */
+.bg-blue-600 {
+  background-color: var(--color-berry) !important;
+}
+.hover\:bg-blue-700:hover {
+  background-color: var(--color-berry-dark) !important;
+}
+.bg-blue-700 {
+  background-color: var(--color-berry-dark) !important;
+}
+.bg-blue-500 {
+  background-color: var(--color-berry-light) !important;
+}
+.bg-blue-50 {
+  background-color: var(--color-offwhite-dark) !important;
+}
+.bg-blue-100 {
+  background-color: var(--color-offwhite-darker) !important;
+}
+.hover\:bg-blue-50:hover {
+  background-color: var(--color-offwhite-darker) !important;
+}
+
+.bg-green-500 {
+  background-color: var(--color-taupe) !important;
+}
+.bg-green-600 {
+  background-color: var(--color-taupe) !important;
+}
+.bg-green-700 {
+  background-color: var(--color-taupe-dark) !important;
+}
+.hover\:bg-green-700:hover {
+  background-color: var(--color-taupe-dark) !important;
+}
+
+.bg-gray-50 {
+  background-color: var(--color-offwhite) !important;
+}
+.bg-gray-100 {
+  background-color: var(--color-offwhite-dark) !important;
+}
+.bg-white {
+  background-color: var(--color-offwhite) !important;
+}
+
+.text-blue-600 {
+  color: var(--color-berry) !important;
+}
+.text-blue-700 {
+  color: var(--color-berry-dark) !important;
+}
+.text-blue-800 {
+  color: var(--color-berry-dark) !important;
+}
+.hover\:text-blue-600:hover {
+  color: var(--color-berry-light) !important;
+}
+.hover\:text-blue-800:hover {
+  color: var(--color-berry-light) !important;
+}
+
+.text-red-600 {
+  color: var(--color-berry) !important;
+}
+.text-red-700 {
+  color: var(--color-berry-dark) !important;
+}
+.text-red-800 {
+  color: var(--color-berry-dark) !important;
+}
+
+.text-green-600 {
+  color: var(--color-taupe) !important;
+}
+.text-green-700 {
+  color: var(--color-taupe-dark) !important;
+}
+.text-green-800 {
+  color: var(--color-taupe-dark) !important;
+}
+
+.border-blue-500 {
+  border-color: var(--color-berry) !important;
+}
+.ring-blue-500 {
+  --tw-ring-color: var(--color-berry) !important;
+}
+
+.border-gray-300 {
+  border-color: var(--color-offwhite-darker) !important;
+}
+.border-gray-200 {
+  border-color: var(--color-offwhite-darker) !important;
+}
+
+.focus\:ring-blue-500:focus {
+  --tw-ring-color: var(--color-berry) !important;
+}
+.focus\:border-blue-500:focus {
+  border-color: var(--color-berry) !important;
+}
+
+/* Utility classes for the new design system */
+.btn-primary {
+  background-color: var(--color-berry);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.btn-primary:hover {
+  background-color: var(--color-berry-dark);
+}
+
+.btn-secondary {
+  background-color: var(--color-offwhite-dark);
+  color: var(--color-navy);
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.btn-secondary:hover {
+  background-color: var(--color-offwhite-darker);
+}
+
+.btn-accent {
+  background-color: var(--color-taupe);
+  color: var(--color-navy);
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.btn-accent:hover {
+  background-color: var(--color-taupe-dark);
+}
+
+.section-light {
+  background-color: var(--color-offwhite);
+  padding: 4rem 0;
+}
+
+.section-navy {
+  background-color: var(--color-navy);
+  color: var(--color-offwhite);
+  padding: 4rem 0;
+}
+
+.section-taupe {
+  background-color: var(--color-taupe);
+  color: var(--color-navy);
+  padding: 4rem 0;
+}
+
+/* Fix for the hero section - gradient backgrounds */
+.bg-gradient-to-r {
+  background: var(--color-navy) !important;
+  background-image: none !important;
+}
+
+/* Fix navigation styles */
+/* nav.fixed.top-0 {
+  background-color: var(--color-navy) !important;
+}
+nav .text-gray-600,
+nav .text-gray-700 {
+  color: var(--color-offwhite) !important;
+}
+nav a:hover {
+  color: var(--color-berry) !important;
+} */
+
+/* Additional fixes for specific elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-navy) !important;
+}
+
+/* Special fix for hero section text */
+.bg-gradient-to-r h1,
+.bg-primary h1,
+.bg-navy h1,
+section.bg-navy h1,
+.bg-navy .text-white,
+.bg-primary .text-white {
+  color: var(--color-offwhite) !important;
+}
+
+/* Fix for secondary headers in colored sections */
+.bg-navy h2,
+.bg-primary h2,
+.section-navy h2 {
+  color: var(--color-offwhite) !important;
+}
+
+/* Fix for paragraph text in colored sections */
+.bg-navy p,
+.bg-primary p,
+.section-navy p {
+  color: var(--color-offwhite) !important;
+}
+
+/* Fix for the left navigation panel */
+aside.hidden.h-full {
+  background-color: var(--color-navy) !important;
+}
+
+aside.hidden.h-full a,
+aside.hidden.h-full span,
+aside.hidden.h-full p,
+aside.hidden.h-full div {
+  color: var(--color-offwhite) !important;
+}
+
+aside.hidden.h-full a:hover {
+  color: var(--color-berry) !important;
+  background-color: var(--color-navy-light) !important;
+}
+
+/* Additional fixes for specific sidebar elements */
+aside .bg-blue-50,
+aside .text-blue-600,
+aside .bg-white {
+  background-color: var(--color-navy-light) !important;
+  color: var(--color-offwhite) !important;
+}
+
+aside .border-t {
+  border-color: var(--color-navy-light) !important;
+}
+
+/* Fix for the dashboard sidebar specifically */
+.dashboard aside,
+aside.md\:flex,
+aside.md\:block,
+.md\:flex.flex-col {
+  background-color: var(--color-navy) !important;
+}
+
+.dashboard aside a,
+.dashboard aside span,
+.dashboard aside p,
+aside.md\:flex a,
+aside.md\:flex span,
+aside.md\:flex p,
+aside.md\:block a,
+aside.md\:block span,
+aside.md\:block p {
+  color: var(--color-offwhite) !important;
+}
+
+.dashboard aside a:hover,
+aside.md\:flex a:hover,
+aside.md\:block a:hover {
+  color: var(--color-berry) !important;
+  background-color: var(--color-navy-light) !important;
+}
+
+/* Fix mobile sidebars as well */
+.fixed.inset-0.bg-white,
+.fixed.inset-0.z-40 {
+  background-color: var(--color-navy) !important;
+}
+
+.fixed.inset-0.bg-white a,
+.fixed.inset-0.bg-white span,
+.fixed.inset-0.bg-white p,
+.fixed.inset-0.z-40 a,
+.fixed.inset-0.z-40 span,
+.fixed.inset-0.z-40 p {
+  color: var(--color-offwhite) !important;
+}
+
+.fixed.inset-0.bg-white a:hover,
+.fixed.inset-0.z-40 a:hover {
+  color: var(--color-berry) !important;
+}
+
+.bg-blue-600.text-white {
+  background-color: var(--color-berry) !important;
+  color: white !important;
+}
+
+.hover\:border-blue-500:hover {
+  border-color: var(--color-berry) !important;
+}
+
+/* Fix for links inside panels */
+/* .text-secondary {
+  color: var(--color-offwhite-dark) !important;
+} */
+
+/* Specific fix for course sidebar text */
+div.flex.h-full.flex-col a,
+div.flex.h-full.flex-col span {
+  color: var(--color-navy) !important;
+}
+
+/* Fix for active item in sidebar */
+.text-blue-600.bg-blue-50 {
+  background-color: var(--color-berry-light) !important;
+  color: var(--color-offwhite) !important;
 }

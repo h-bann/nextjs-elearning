@@ -1,68 +1,68 @@
-// app/api/auth/signup/route.js
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
 import { checkExistingUser, createUser } from "@/lib/queries";
 import { cookies } from "next/headers";
+import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(req) {
   try {
     const { username, email, password } = await req.json();
-    console.log(username, email, password);
-    // Validate input
+    // check there is input, return error if not
     if (!username || !email || !password) {
       return Response.json(
         { message: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Check if user exists
+    // does user exist, return error if not
     const existingUser = await mySQL(checkExistingUser, [email]);
-    console.log(existingUser);
     if (existingUser.length > 0) {
       return Response.json(
         { message: "User already exists" },
         {
           status: 400,
-        }
+        },
       );
     }
 
-    // Hash password
+    // hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
+    // generate verification token and 24hr expiry
+    const verificationToken = uuidv4();
+    const verificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000)
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+
+    // create user
     const userId = uuidv4();
-    await mySQL(createUser, [userId, "user", username, email, hashedPassword]);
+    await mySQL(createUser, [
+      userId,
+      "user",
+      username,
+      email,
+      hashedPassword,
+      false,
+      verificationToken,
+      verificationExpiry,
+    ]);
 
-    // Create JWT token
-    const token = jwt.sign({ userId, email }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
-    });
-    console.log(token);
+    // send verification email
+    // await sendVerificationEmail(email, username, verificationToken);
 
-    const cookieStore = await cookies();
-    cookieStore.set("auth_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
-      path: "/",
-    });
-
+    // returns success message but doesn't set session cookie yet
     return Response.json(
       {
-        user: {
-          id: userId,
-          username,
-          email,
-        },
+        success: true,
+        requireVerification: true,
+        message:
+          "Registration successful. Please check your email to verify your account.",
       },
-      {
-        status: 201,
-      }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Signup error:", error);
@@ -70,7 +70,7 @@ export async function POST(req) {
       { message: "Internal server error" },
       {
         status: 500,
-      }
+      },
     );
   }
 }

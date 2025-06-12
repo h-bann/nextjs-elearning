@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-elearning",
+  "name": "keyholding",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,12 +12,16 @@
     "@aws-sdk/client-s3": "^3.750.0",
     "@hello-pangea/dnd": "^18.0.1",
     "bcryptjs": "^3.0.2",
+    "date-fns": "^4.1.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.475.0",
     "mysql2": "^3.12.0",
-    "next": "15.1.7",
+    "next": "^15.2.4",
     "next-auth": "^4.24.11",
+    "nodemailer": "^6.10.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sharp": "^0.33.5",
@@ -25,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",

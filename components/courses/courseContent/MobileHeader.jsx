@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import MobileSidebar from "./MobileSidebar";
 
@@ -10,21 +10,32 @@ export default function MobileHeader({
   activeModuleId,
   activeLessonId,
   completedLessons = [],
+  previewMode = false,
+  isInstructor = false,
+  isPublished = false,
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const showPreviewLabel = previewMode || (isInstructor && !isPublished);
 
   return (
     <>
-      <div className="md:hidden bg-white border-b px-4 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-semibold truncate">{title}</h1>
+      <div className="flex items-center justify-between border-b bg-white px-4 py-3 md:hidden">
+        <div className="flex flex-col">
+          <h1 className="truncate text-lg font-semibold">{title}</h1>
+          {showPreviewLabel && (
+            <span className="inline-block rounded-full bg-yellow-100 px-2 py-1 text-xs text-yellow-800">
+              Preview Mode
+            </span>
+          )}
+        </div>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 hover:bg-gray-100 rounded-lg"
+          className="rounded-lg p-2 hover:bg-gray-100"
         >
           {isSidebarOpen ? (
-            <X className="w-6 h-6" />
+            <X className="h-6 w-6" />
           ) : (
-            <Menu className="w-6 h-6" />
+            <Menu className="h-6 w-6" />
           )}
         </button>
       </div>
@@ -36,6 +47,7 @@ export default function MobileHeader({
           activeLessonId={activeLessonId}
           completedLessons={completedLessons}
           onNavigate={() => setIsSidebarOpen(false)}
+          previewMode={showPreviewLabel}
         />
       )}
     </>

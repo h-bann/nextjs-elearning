@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["schoolforsubmissives.lon1.digitaloceanspaces.com"],
+    domains: [
+      `${process.env.DO_SPACES_NAME}.${process.env.DO_SPACES_REGION}.digitaloceanspaces.com`,
+    ],
   },
   async rewrites() {
     return [

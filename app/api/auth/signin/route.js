@@ -7,13 +7,13 @@ import { createToken } from "@/lib/jwt";
 
 export async function POST(req) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, rememberMe } = await req.json();
 
     // Validate input
     if (!email || !password) {
       return Response.json(
         { message: "Email and password are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -26,7 +26,7 @@ export async function POST(req) {
         { message: "Invalid credentials" },
         {
           status: 401,
-        }
+        },
       );
     }
 
@@ -38,12 +38,28 @@ export async function POST(req) {
         { message: "Invalid credentials" },
         {
           status: 401,
-        }
+        },
       );
     }
 
-    // Create JWT token with centralied utility
-    const token = createToken(user);
+    if (!user.verified) {
+      return Response.json(
+        {
+          message: "Please verify your email address before signing in",
+          needsVerification: true,
+          email: user.email,
+        },
+        { status: 403 },
+      );
+    }
+
+    // Set token expiration based on "remember me" option
+    const tokenOptions = {
+      expiresIn: rememberMe ? "7d" : "24h", // 7 days if remember me is checked, otherwise 24 hours
+    };
+
+    // Create JWT token with centralized utility
+    const token = createToken(user, tokenOptions);
 
     // Prepare user data (excluding sensitive information)
     const userData = {
@@ -58,13 +74,19 @@ export async function POST(req) {
       process.env.NODE_ENV === "production"
         ? "__Host-auth_token"
         : "auth_token";
+
+    // Set cookie max age based on "remember me" option
+    const maxAge = rememberMe
+      ? 7 * 24 * 60 * 60 // 7 days in seconds
+      : 24 * 60 * 60; // 24 hours in seconds
+
     cookieStore.set({
       name: cookieName,
       value: token,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 24 * 60 * 60, // 24 hours in seconds
+      maxAge: maxAge,
       path: "/",
     });
 
@@ -73,7 +95,7 @@ export async function POST(req) {
       { user: userData },
       {
         status: 200,
-      }
+      },
     );
   } catch (error) {
     console.error("Sign in error:", error);
@@ -81,7 +103,7 @@ export async function POST(req) {
       { message: "Internal server error" },
       {
         status: 500,
-      }
+      },
     );
   }
 }

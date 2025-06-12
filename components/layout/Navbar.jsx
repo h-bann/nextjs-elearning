@@ -1,29 +1,18 @@
-"use client";
-import React, { useState } from "react";
-import { Menu, X, User, LogIn, LogOut } from "lucide-react";
-import { useAuth } from "@/lib/clientAuth";
-import { useRouter } from "next/navigation";
+// components/layout/Navbar.jsx
+import Link from "next/link";
+import { getServerSession } from "@/lib/serverAuth";
+import { Menu, LogIn, LogOut } from "lucide-react";
+import ClientSideMenu from "./ClientSideMenu";
+import SignOutButton from "./SignOutButton"; // We'll create this
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signout } = useAuth();
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    const result = await signout();
-    if (result.success) {
-      router.push("/");
-    }
-  };
+export default async function Navbar() {
+  const user = await getServerSession();
 
   const menuItems = [
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
-    // { label: "About", href: "/about" },
-    // { label: "Contact", href: "/contact" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ];
 
   // If user is logged in, add dashboard to menu items
@@ -32,28 +21,28 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white shadow-md fixed w-full top-0 z-50">
+    <nav className="fixed top-0 z-50 w-full bg-primary shadow-md">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-blue-600">
-              EduPlatform
-            </span>
-          </a>
+          <Link href="/" className="flex items-center">
+            <h1 className="text-4xl font-medium text-secondary">
+              E-learning platform
+            </h1>
+          </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden items-center space-x-8 md:flex">
             {/* Navigation Links */}
             <div className="flex space-x-8">
               {menuItems.map((item) => (
-                <a
+                <Link
                   key={item.label}
                   href={item.href}
-                  className="text-gray-600 hover:text-blue-600 transition-colors"
+                  className="text-secondary transition-colors hover:text-accent"
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -61,100 +50,35 @@ const Navbar = () => {
             <div className="flex items-center space-x-4">
               {user ? (
                 <div className="flex items-center space-x-4">
-                  <span className="text-gray-600">
+                  <span className="text-secondary">
                     Welcome, {user.username}
                   </span>
-                  <button
-                    onClick={handleSignOut}
-                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
-                  >
-                    <LogOut size={20} />
-                    <span>Sign Out</span>
-                  </button>
+                  <SignOutButton />
                 </div>
               ) : (
                 <>
-                  <a
+                  <Link
                     href="/auth/signin"
-                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
+                    className="flex items-center space-x-2 text-secondary hover:text-accent"
                   >
                     <LogIn size={20} />
                     <span>Sign In</span>
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/auth/signup"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="text-charcoal rounded-lg bg-accent px-4 py-2 transition-colors hover:bg-accent-hover"
                   >
                     Sign Up
-                  </a>
+                  </Link>
                 </>
               )}
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden text-gray-600 hover:text-blue-600 focus:outline-none"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"} pb-4`}>
-          <div className="flex flex-col space-y-4">
-            {menuItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-gray-600 hover:text-blue-600 transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
-
-            {/* Mobile Auth Buttons */}
-            <div className="border-t border-gray-200 pt-4 space-y-4">
-              {user ? (
-                <>
-                  <span className="block text-gray-600">
-                    Welcome, {user.name}
-                  </span>
-                  <button
-                    onClick={handleSignOut}
-                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
-                  >
-                    <LogOut size={20} />
-                    <span>Sign Out</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <a
-                    href="/auth/signin"
-                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <LogIn size={20} />
-                    <span>Sign In</span>
-                  </a>
-                  <a
-                    href="/auth/signup"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-block w-full text-center"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign Up
-                  </a>
-                </>
-              )}
-            </div>
-          </div>
+          {/* Mobile Menu Button - This needs client-side interactivity */}
+          <ClientSideMenu menuItems={menuItems} user={user} />
         </div>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

@@ -1,9 +1,9 @@
+// app/layout.jsx
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
-import { AuthProvider } from "@/lib/clientAuth";
 
 export const metadata = {
-  title: "E-Learning App",
+  title: "E-learning app",
   description: "E-Learning App",
 };
 
@@ -11,11 +11,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <Navbar />
-          {/* Add padding-top to account for fixed navbar */}
-          <div className="pt-16">{children}</div>
-        </AuthProvider>
+        <Navbar />
+        <div className="pt-16">{children}</div>
       </body>
     </html>
   );

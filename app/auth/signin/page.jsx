@@ -1,58 +1,51 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { AlertCircle } from "lucide-react";
-import { useAuth } from "@/lib/clientAuth";
-import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/auth-actions";
+import { useFormState, useFormStatus } from "react-dom";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const SignInForm = () => {
-  const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const { signin } = useAuth();
-  const router = useRouter();
-
-  // Check for registration success message in URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("registered") === "true") {
-      setRegistrationSuccess(true);
-    }
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const result = await signin(credentials);
-
-      if (!result.success) {
-        throw new Error(result.error);
-      }
-      // Redirect to dashboard on success
-      router.push("/");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+// Submit button with loading state
+function SubmitButton() {
+  const { pending } = useFormStatus();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <button
+      type="submit"
+      disabled={pending}
+      className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {pending ? "Signing in..." : "Sign in"}
+    </button>
+  );
+}
+const SignInForm = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+
+  // Initial state for the form
+  const initialState = { success: false, error: null };
+
+  // Use the form state hook with our server action
+  const [state, formAction] = useFormState(signIn, initialState);
+
+  // If sign-in was successful, redirect
+  if (state.success) {
+    router.push(state.redirectTo || redirectTo);
+    return null;
+  }
+
+  // If verification is needed, update state
+  if (state.needsVerification && !needsVerification) {
+    setNeedsVerification(true);
+    setVerificationEmail(state.email);
+  }
+  return (
+    <div className="flex min-h-screen flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
           Sign in to your account
@@ -60,21 +53,33 @@ const SignInForm = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {registrationSuccess && (
-            <div className="mb-4 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg">
-              Registration successful! Please sign in.
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center gap-2">
+        <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+          {state.error && (
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-600">
               <AlertCircle size={20} />
-              {error}
+              {state.error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {needsVerification && (
+            <div className="mb-4 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-yellow-800">
+              <p>Please verify your email before signing in.</p>
+              <button
+                onClick={() =>
+                  router.push(
+                    `/auth/resend-verification?email=${verificationEmail}`,
+                  )
+                }
+                className="mt-2 text-sm font-medium text-primary hover:underline"
+              >
+                Resend verification email
+              </button>
+            </div>
+          )}
+
+          <form action={formAction} className="space-y-6">
+            <input type="hidden" name="redirectTo" value={redirectTo} />
+
             <div>
               <label
                 htmlFor="email"
@@ -88,9 +93,7 @@ const SignInForm = () => {
                   name="email"
                   type="email"
                   required
-                  value={credentials.email}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -108,9 +111,7 @@ const SignInForm = () => {
                   name="password"
                   type="password"
                   required
-                  value={credentials.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -118,13 +119,13 @@ const SignInForm = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
-                  id="remember-me"
-                  name="remember-me"
+                  id="rememberMe"
+                  name="rememberMe"
                   type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <label
-                  htmlFor="remember-me"
+                  htmlFor="rememberMe"
                   className="ml-2 block text-sm text-gray-900"
                 >
                   Remember me
@@ -142,13 +143,7 @@ const SignInForm = () => {
             </div>
 
             <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Signing in..." : "Sign in"}
-              </button>
+              <SubmitButton />
             </div>
           </form>
 
@@ -158,7 +153,7 @@ const SignInForm = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
+                <span className="bg-white px-2 text-gray-500">
                   Don't have an account?
                 </span>
               </div>
@@ -167,7 +162,7 @@ const SignInForm = () => {
             <div className="mt-6">
               <a
                 href="/auth/signup"
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
                 Create an account
               </a>

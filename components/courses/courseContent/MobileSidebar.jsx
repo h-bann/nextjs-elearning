@@ -1,7 +1,7 @@
+// MobileSidebar.jsx
 "use client";
 
 import CourseSidebar from "./CourseSidebar";
-import { useEffect } from "react";
 
 export default function MobileSidebar({
   course,
@@ -9,15 +9,17 @@ export default function MobileSidebar({
   activeLessonId,
   completedLessons = [],
   onNavigate,
+  previewMode = false,
 }) {
   return (
-    <div className="md:hidden fixed inset-0 z-40 bg-white overflow-y-auto">
+    <div className="fixed inset-0 z-40 overflow-y-auto bg-white md:hidden">
       <CourseSidebar
         course={course}
         activeModuleId={activeModuleId}
         activeLessonId={activeLessonId}
         completedLessons={completedLessons}
         onNavigate={onNavigate}
+        previewMode={previewMode}
       />
     </div>
   );

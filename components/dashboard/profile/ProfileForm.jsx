@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { User, Mail, Upload } from "lucide-react";
+import { User, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/clientAuth";
 
 export default function ProfileForm({ user }) {
   const [formData, setFormData] = useState({
@@ -13,7 +12,6 @@ export default function ProfileForm({ user }) {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
-  const { updateUser } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -58,8 +56,8 @@ export default function ProfileForm({ user }) {
         <div
           className={`rounded-md p-4 ${
             message.type === "success"
-              ? "bg-green-50 text-green-800"
-              : "bg-red-50 text-red-800"
+              ? "bg-green-200 text-black"
+              : "bg-red-200 text-black"
           }`}
         >
           {message.text}
@@ -105,7 +103,7 @@ export default function ProfileForm({ user }) {
             onChange={(e) =>
               setFormData({ ...formData, username: e.target.value })
             }
-            className="block h-10 w-full rounded-md border-gray-300 pl-10 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block h-10 w-full rounded-md border-gray-300 pl-10 shadow-sm focus:outline-accent-light sm:text-sm"
           />
         </div>
       </div>
@@ -124,7 +122,7 @@ export default function ProfileForm({ user }) {
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
-            className="block h-10 w-full rounded-md border-gray-300 pl-10 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            className="block h-10 w-full rounded-md border-gray-300 pl-10 shadow-sm focus:outline-accent-light sm:text-sm"
           />
         </div>
       </div>
@@ -133,7 +131,7 @@ export default function ProfileForm({ user }) {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+          className="rounded-md bg-accent-light px-4 py-2 text-white hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>

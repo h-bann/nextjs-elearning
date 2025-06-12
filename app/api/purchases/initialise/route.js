@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import mySQL from "@/lib/database";
-import { getLoggedInUser, updateEnrollmentRecord } from "@/lib/queries";
+import { getLoggedInUser, createEnrollmentRecord } from "@/lib/queries";
 
 // ! PURCHASE ROUTE
 
@@ -37,7 +37,7 @@ export async function POST(req) {
     const purchaseId = uuidv4();
 
     // Create pending purchase record
-    await mySQL(updateEnrollmentRecord, [
+    await mySQL(createEnrollmentRecord, [
       purchaseId,
       users[0].id,
       courseId,

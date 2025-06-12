@@ -3,19 +3,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp, Shield } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
-export default function CourseCard({
-  course,
-  userVerified = false,
-  userRole = null,
-}) {
+export default function CourseCard({ course }) {
   const [showDescription, setShowDescription] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const router = useRouter();
-
-  // Instructors don't need age verification
-  const needsVerification = userRole !== "instructor" && !userVerified;
 
   const handleCourseClick = async () => {
     if (!course.isEnrolled) {
@@ -32,7 +25,7 @@ export default function CourseCard({
           return;
         }
 
-        // User is logged in, go to purchase page (which will handle verification)
+        // User is logged in, go to purchase page
         router.push(`/courses/${course.id}/purchase`);
       } catch (error) {
         console.error("Error checking auth status:", error);
@@ -66,12 +59,6 @@ export default function CourseCard({
             Enrolled
           </div>
         )}
-        {!course.isEnrolled && needsVerification && (
-          <div className="absolute left-2 top-2 flex items-center rounded bg-amber-500 px-2 py-1 text-xs text-white">
-            <Shield className="mr-1 h-3 w-3" />
-            18+ Verification Required
-          </div>
-        )}
       </div>
 
       {/* Course Info */}
@@ -100,7 +87,7 @@ export default function CourseCard({
           </button>
         </div>
 
-        {/* Expandable Description with smooth height transition */}
+        {/* Expandable Description */}
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${
             showDescription ? "max-h-48" : "max-h-0"
@@ -108,23 +95,6 @@ export default function CourseCard({
         >
           <p className="mb-4 text-gray-600">{course.description}</p>
         </div>
-
-        {/* Age Verification Notice - Only show for non-instructors */}
-        {!course.isEnrolled && needsVerification && (
-          <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3">
-            <div className="flex items-start">
-              <Shield className="mr-2 mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" />
-              <div>
-                <p className="text-xs font-medium text-amber-800">
-                  Age Verification Required
-                </p>
-                <p className="text-xs text-amber-700">
-                  You'll need to verify you're 18+ before purchasing
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Action Button */}
         <button

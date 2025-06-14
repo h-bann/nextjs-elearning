@@ -1,7 +1,12 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
-import { checkInstructor, getLoggedInUser } from "@/lib/queries";
+import {
+  checkInstructor,
+  getLoggedInUser,
+  updateCourseWithImage,
+  updateCourseWithoutImage,
+} from "@/lib/queries";
 
 // Updated course editing route to handle PUT requests for updating course details
 export async function PUT(req, { params }) {
@@ -38,15 +43,24 @@ export async function PUT(req, { params }) {
       );
     }
 
-    // Update course in database
-    await mySQL(
-      `UPDATE courses 
-       SET title = ?, description = ?, price = ?${imageUrl ? ", image_url = ?" : ""}
-       WHERE id = ? AND instructor_id = ?`,
-      imageUrl
-        ? [title, description, price, imageUrl, courseId, user.id]
-        : [title, description, price, courseId, user.id],
-    );
+    if (imageUrl) {
+      await mySQL(updateCourseWithImage, [
+        title,
+        description,
+        price,
+        imageUrl,
+        courseId,
+        user.id,
+      ]);
+    } else {
+      await mySQL(updateCourseWithoutImage, [
+        title,
+        description,
+        price,
+        courseId,
+        user.id,
+      ]);
+    }
 
     return Response.json(
       {

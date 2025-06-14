@@ -3,6 +3,7 @@ import { sendWelcomeEmail } from "@/lib/email";
 import { createToken } from "@/lib/jwt";
 import {
   findVerificationToken,
+  findVerificationTokenWithUserData,
   updateVerification,
   usedVerificationToken,
 } from "@/lib/queries";
@@ -38,7 +39,10 @@ export async function GET(req) {
       );
     }
 
-    const users = await mySQL(findVerificationToken, [token, timestamp]);
+    const users = await mySQL(findVerificationTokenWithUserData, [
+      token,
+      timestamp,
+    ]);
     console.log(`Query result: Found ${users.length} matching users`);
 
     if (!users.length) {

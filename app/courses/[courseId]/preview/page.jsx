@@ -1,5 +1,3 @@
-// app/courses/[courseId]/preview/page.jsx
-
 import { getServerSession } from "@/lib/serverAuth";
 import mySQL from "@/lib/database";
 import { redirect } from "next/navigation";
@@ -9,6 +7,7 @@ import CourseSidebar from "@/components/courses/courseContent/CourseSidebar";
 import MobileHeader from "@/components/courses/courseContent/MobileHeader";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
 import InstructorViewBanner from "@/components/courses/courseContent/InstructorViewBanner";
+import PreviewNavigation from "@/components/courses/courseContent/PreviewNavigation";
 
 // Function to transform the raw data
 function transformLessonData(rawLessonData) {
@@ -84,11 +83,18 @@ export default async function CoursePreviewPage({ params, searchParams }) {
         isPublished={!!courseData.published}
       />
 
+      {/* Add Preview Navigation */}
+      <PreviewNavigation
+        courseId={courseId}
+        courseTitle={courseData.title}
+        isPublished={!!courseData.published}
+      />
+
       <CourseProgressProvider
         initialCompletedLessons={completedLessons}
         courseModules={courseData.modules}
       >
-        <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden bg-white md:flex-row">
+        <div className="flex h-[calc(100vh-8rem)] flex-col overflow-hidden bg-white md:flex-row">
           {/* Mobile Header */}
           <MobileHeader
             title={`${courseData.title} (Preview Mode)`}
@@ -189,7 +195,7 @@ export default async function CoursePreviewPage({ params, searchParams }) {
                           {/* Video (if exists) */}
                           {videoContent && (
                             <div className="my-6">
-                              <div className="aspect-w-16 aspect-h-9">
+                              <div className="aspect-h-9 aspect-w-16">
                                 <video
                                   src={videoContent.value}
                                   controls

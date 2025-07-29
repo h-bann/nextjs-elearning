@@ -1,4 +1,3 @@
-// app/api/webhooks/ccbill/route.js
 import mySQL from "@/lib/database";
 import {
   createEnrollmentFromPurchase,

@@ -1,4 +1,3 @@
-// app/api/auth/signout/route.js (modified)
 export async function POST(req) {
   try {
     // Create response with success message

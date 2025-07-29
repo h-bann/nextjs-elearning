@@ -1,4 +1,3 @@
-// app/api/profile/delete-account/route.js
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";
@@ -10,7 +9,6 @@ import {
   startTransaction,
   commitTransaction,
   rollbackTransaction,
-  // Simple instructor queries
   checkAnyEnrolledStudents,
   deleteAllInstructorCourseContent,
   deleteAllInstructorLessons,

@@ -1,4 +1,3 @@
-// app/courses/page.jsx
 import mySQL from "@/lib/database";
 import { getAllCourses, getUserEnrollments } from "@/lib/queries";
 import CourseGrid from "@/components/courses/courseList/CourseGrid";

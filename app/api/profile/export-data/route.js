@@ -1,4 +1,3 @@
-// app/api/profile/export-data/route.js
 import mySQL from "@/lib/database";
 import {
   getUserEnrollmentData,

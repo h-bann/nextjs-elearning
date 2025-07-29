@@ -1,4 +1,3 @@
-// app/api/courses/file-delete/route.js
 import { withRole } from "@/lib/serverAuth";
 import { deleteFromS3 } from "@/lib/fileUpload";
 

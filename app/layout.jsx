@@ -1,4 +1,3 @@
-// app/layout.jsx
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 

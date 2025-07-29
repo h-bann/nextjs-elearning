@@ -1,4 +1,3 @@
-// app/auth/verify-email/page.jsx
 "use client";
 
 import { useState, useEffect } from "react";

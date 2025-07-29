@@ -78,7 +78,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section  */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="mb-12 text-center text-3xl font-medium text-primary">
@@ -92,7 +92,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="bg-secondary py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="mb-6 text-3xl font-semibold text-primary">
@@ -111,7 +110,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <FooterComponent />
     </div>
   );

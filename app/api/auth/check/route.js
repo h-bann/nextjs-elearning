@@ -1,4 +1,3 @@
-// app/api/auth/check/route.js
 import mySQL from "@/lib/database";
 import { getLoggedInUser } from "@/lib/queries";
 import jwt from "jsonwebtoken";
@@ -26,7 +25,7 @@ export async function GET(req) {
         { message: "User not found" },
         {
           status: 401,
-        }
+        },
       );
     }
 
@@ -38,7 +37,7 @@ export async function GET(req) {
         { message: "Invalid token" },
         {
           status: 401,
-        }
+        },
       );
     }
 
@@ -47,7 +46,7 @@ export async function GET(req) {
         { message: "Token expired" },
         {
           status: 401,
-        }
+        },
       );
     }
 
@@ -56,7 +55,7 @@ export async function GET(req) {
       { message: "Internal server error" },
       {
         status: 500,
-      }
+      },
     );
   }
 }

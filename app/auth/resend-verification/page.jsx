@@ -1,4 +1,3 @@
-// app/auth/resend-verification/page.jsx
 "use client";
 
 import { useState } from "react";

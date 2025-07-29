@@ -1,4 +1,3 @@
-// app/courses/[courseId]/learn/page.jsx
 import { getServerSession } from "@/lib/serverAuth";
 import mySQL from "@/lib/database";
 import { redirect } from "next/navigation";

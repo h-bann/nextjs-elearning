@@ -1,4 +1,3 @@
-// app/dashboard/courses/[courseId]/settings/page.jsx
 import { redirect } from "next/navigation";
 import mySQL from "@/lib/database";
 import { getCourse, checkInstructor } from "@/lib/queries";

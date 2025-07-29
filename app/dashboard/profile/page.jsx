@@ -1,4 +1,3 @@
-// app/dashboard/profile/page.jsx
 import ProfileForm from "@/components/dashboard/profile/ProfileForm";
 import ProfileHeader from "@/components/dashboard/profile/ProfileHeader";
 import SecuritySection from "@/components/dashboard/profile/SecuritySection";

@@ -1,4 +1,3 @@
-// app/dashboard/courses/[courseId]/edit/page.jsx
 import { redirect } from "next/navigation";
 import mySQL from "@/lib/database";
 import ModuleManager from "@/components/dashboard/course-creation/ModuleManager";

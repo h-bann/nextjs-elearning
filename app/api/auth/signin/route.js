@@ -1,4 +1,3 @@
-// app/api/auth/signin/route.js
 import mySQL from "@/lib/database";
 import { getUser } from "@/lib/queries";
 import bcrypt from "bcryptjs";

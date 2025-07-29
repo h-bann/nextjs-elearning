@@ -1,4 +1,3 @@
-// app/api/verification/check/route.js
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import mySQL from "@/lib/database";

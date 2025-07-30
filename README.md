@@ -36,13 +36,13 @@ Before running this project, you will need:
    git clone <your-repo-url>
    cd nexjs-elearning
 
-2. **Install dependencies**
+3. **Install dependencies**
    npm install
 
-3. **Set up environment variables**
+4. **Set up environment variables**
    Creat .env.local file using .env.example as a guide
 
-4. **Set up the database**
+5. **Set up the database**
 
    Create a MySQL database and run the following SQL schema:
 
@@ -130,7 +130,7 @@ Before running this project, you will need:
      FOREIGN KEY (lesson_id) REFERENCES lessons(id)
    );
 
-5. **Run the development server**
+6. **Run the development server**
    npm run dev
 
    The application will be available at [http://localhost:3000](http://localhost:3000)

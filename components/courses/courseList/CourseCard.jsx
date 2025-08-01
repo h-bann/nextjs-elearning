@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { checkAuthStatus } from "@/lib/auth-actions";
 
 export default function CourseCard({ course }) {
   const [showDescription, setShowDescription] = useState(false);
@@ -13,10 +14,9 @@ export default function CourseCard({ course }) {
     if (!course.isEnrolled) {
       // Check if user is logged in first
       try {
-        const response = await fetch("/api/auth/check");
-        const data = await response.json();
+        const authCheck = await checkAuthStatus();
 
-        if (!data.user) {
+        if (!authCheck.user) {
           // Not logged in, redirect to signup
           router.push(
             `/auth/signup?redirect=${encodeURIComponent(`/courses/${course.id}/purchase`)}`,

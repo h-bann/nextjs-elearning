@@ -1,9 +1,9 @@
 import CourseForm from "@/components/dashboard/course-creation/CourseForm";
-import { requireRole } from "@/lib/serverAuth";
+import { checkAuthStatus } from "@/lib/auth-actions";
 
 export default async function CreateCoursePage() {
-  const user = await requireRole("instructor");
-
+  const authCheck = await checkAuthStatus();
+  const user = authCheck.user;
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-6">

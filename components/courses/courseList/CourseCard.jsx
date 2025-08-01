@@ -1,4 +1,3 @@
-// components/courses/courseList/CourseCard.jsx
 "use client";
 
 import { useState } from "react";

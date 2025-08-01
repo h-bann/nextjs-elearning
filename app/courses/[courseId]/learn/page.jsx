@@ -12,7 +12,6 @@ import MobileHeader from "@/components/courses/courseContent/MobileHeader";
 import { getCompletedLessons, canAccessLesson } from "@/lib/serverActions";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
 import InstructorViewBanner from "@/components/courses/courseContent/InstructorViewBanner";
-import { requireAuth } from "@/lib/auth-actions";
 
 // This forces the page to be dynamic and not cached
 export const dynamic = "force-dynamic";
@@ -20,14 +19,15 @@ export const fetchCache = "force-no-store";
 export const revalidate = 0;
 
 export default async function LearnPage({ params, searchParams }) {
-  const { courseId } = await params;
-  const { moduleId, lessonId } = await searchParams;
   const user = await requireAuth();
 
   if (!user) {
     redirect("/auth/signin?redirect=/dashboard");
     return null;
   }
+
+  const { courseId } = await params;
+  const { moduleId, lessonId } = await searchParams;
 
   // Add a timestamp parameter to ensure fresh data on each request
   const timestamp = Date.now();

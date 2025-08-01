@@ -18,7 +18,7 @@ export default async function CourseContent({
     ]);
     isCompleted = completionStatus.length > 0;
   }
-  console.log(lesson);
+  // console.log(lesson);
 
   if (!lesson || lesson.length === 0) {
     return (
@@ -98,7 +98,7 @@ export default async function CourseContent({
           {/* Video (if exists) */}
           {videoContent && (
             <div className="my-6">
-              <div className="aspect-w-16 aspect-h-9">
+              <div className="aspect-h-9 aspect-w-16">
                 <video
                   src={videoContent.value}
                   controls

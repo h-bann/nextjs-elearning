@@ -10,7 +10,6 @@ export default function CourseForm({ instructorId }) {
   const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",

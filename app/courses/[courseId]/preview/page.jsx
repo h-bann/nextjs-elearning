@@ -45,7 +45,7 @@ export default async function CoursePreviewPage({ params, searchParams }) {
   const { courseId } = await params;
   const { moduleId, lessonId } = await searchParams;
   const user = await requireAuth();
-
+  console.log(user);
   if (!user) {
     redirect("/auth/signin?redirect=/dashboard");
     return null;
@@ -53,6 +53,7 @@ export default async function CoursePreviewPage({ params, searchParams }) {
 
   // Verify that the user is the instructor of this course
   const instructorCheck = await mySQL(checkInstructor, [courseId]);
+  console.log(instructorCheck);
   if (!instructorCheck.length || instructorCheck[0].instructor_id !== user.id) {
     redirect("/dashboard/courses");
     return null;
@@ -60,7 +61,8 @@ export default async function CoursePreviewPage({ params, searchParams }) {
 
   // Get course data
   const courseData = await getCourseAndModules(courseId);
-  if (!courseData || !courseData.modules.length) {
+  console.log(courseData);
+  if (!courseData) {
     redirect("/dashboard/courses");
     return null;
   }

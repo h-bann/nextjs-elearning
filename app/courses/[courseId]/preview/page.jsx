@@ -1,4 +1,3 @@
-import { getServerSession } from "@/lib/serverAuth";
 import mySQL from "@/lib/database";
 import { redirect } from "next/navigation";
 import { checkInstructor, getLessonWithContent } from "@/lib/queries";
@@ -8,6 +7,7 @@ import MobileHeader from "@/components/courses/courseContent/MobileHeader";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
 import InstructorViewBanner from "@/components/courses/courseContent/InstructorViewBanner";
 import PreviewNavigation from "@/components/courses/courseContent/PreviewNavigation";
+import { requireAuth } from "@/lib/auth-actions";
 
 // Function to transform the raw data
 function transformLessonData(rawLessonData) {
@@ -44,7 +44,7 @@ function transformLessonData(rawLessonData) {
 export default async function CoursePreviewPage({ params, searchParams }) {
   const { courseId } = await params;
   const { moduleId, lessonId } = await searchParams;
-  const user = await getServerSession();
+  const user = await requireAuth();
 
   if (!user) {
     redirect("/auth/signin?redirect=/dashboard");

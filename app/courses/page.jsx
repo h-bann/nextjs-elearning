@@ -1,7 +1,7 @@
 import mySQL from "@/lib/database";
 import { getAllCourses, getUserEnrollments } from "@/lib/queries";
 import CourseGrid from "@/components/courses/courseList/CourseGrid";
-import { getServerSession } from "@/lib/serverAuth";
+import { requireAuth } from "@/lib/auth-actions";
 
 async function getCoursesWithEnrollmentStatus(userId = null) {
   const courses = await mySQL(getAllCourses);
@@ -24,7 +24,7 @@ async function getCoursesWithEnrollmentStatus(userId = null) {
 }
 
 export default async function CoursesPage() {
-  const user = await getServerSession();
+  const user = await requireAuth();
   const { courses } = await getCoursesWithEnrollmentStatus(user?.id);
 
   return (

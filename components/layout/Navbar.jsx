@@ -1,12 +1,12 @@
 // components/layout/Navbar.jsx
 import Link from "next/link";
-import { getServerSession } from "@/lib/serverAuth";
 import { Menu, LogIn, LogOut } from "lucide-react";
 import ClientSideMenu from "./ClientSideMenu";
 import SignOutButton from "./SignOutButton"; // We'll create this
+import { requireAuth } from "@/lib/auth-actions";
 
 export default async function Navbar() {
-  const user = await getServerSession();
+  const user = await requireAuth();
 
   const menuItems = [
     { label: "Home", href: "/" },

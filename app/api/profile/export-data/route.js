@@ -4,13 +4,13 @@ import {
   getUserPersonalInfo,
   getUserProgressData,
 } from "@/lib/queries";
-import { getServerSession } from "@/lib/serverAuth";
 import { generateUserDataPDF } from "@/lib/pdfGenerator";
+import { requireAuth } from "@/lib/auth-actions";
 
 export async function GET(req) {
   try {
     // Use existing server session helper
-    const user = await getServerSession();
+    const user = await requireAuth();
 
     if (!user) {
       return Response.json({ message: "Unauthorized" }, { status: 401 });

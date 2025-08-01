@@ -1,10 +1,9 @@
-// app/courses/[courseId]/purchase/page.jsx
-import { getServerSession } from "@/lib/serverAuth";
 import mySQL from "@/lib/database";
 import { redirect } from "next/navigation";
 import { getCourse, checkExistingEnrollment } from "@/lib/queries";
 import PurchaseForm from "@/components/courses/purchase/PurchaseForm";
 import VerificationRequired from "@/components/verification/VerificationRequired";
+import { requireAuth } from "@/lib/auth-actions";
 
 async function getCheckoutData(courseId, userId) {
   // Get course details
@@ -42,7 +41,7 @@ async function getCheckoutData(courseId, userId) {
 
 export default async function PurchasePage({ params }) {
   const { courseId } = await params;
-  const user = await getServerSession();
+  const user = await requireAuth();
 
   if (!user) {
     redirect("/auth/signup?redirect=/dashboard");

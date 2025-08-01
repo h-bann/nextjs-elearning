@@ -2,7 +2,6 @@ import StatCard from "./StatsCard";
 import { BookOpen, Clock, Trophy, Users } from "lucide-react";
 import { getCourseStats, getInstructorStudentStats } from "@/lib/queries";
 import mySQL from "@/lib/database";
-import { getServerSession } from "@/lib/serverAuth";
 
 async function getInstructorStats(userId) {
   const courseStats = await mySQL(getCourseStats, [userId]);
@@ -14,13 +13,7 @@ async function getInstructorStats(userId) {
   };
 }
 
-export default async function InstructorDashboard() {
-  const user = await getServerSession();
-  if (!user) {
-    redirect("/auth/signin?redirect=/dashboard");
-    return null;
-  }
-
+export default async function InstructorDashboard({ user }) {
   let stats = {
     totalCourses: 0,
     totalStudents: 0,

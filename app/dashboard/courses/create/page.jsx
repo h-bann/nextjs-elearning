@@ -1,9 +1,12 @@
 import CourseForm from "@/components/dashboard/course-creation/CourseForm";
-import { checkAuthStatus } from "@/lib/auth-actions";
+import { checkAuthStatus, requireAuth } from "@/lib/auth-actions";
 
 export default async function CreateCoursePage() {
-  const authCheck = await checkAuthStatus();
-  const user = authCheck.user;
+  const user = await requireAuth();
+  if (!user) {
+    redirect("/auth/signin?redirect=/dashboard");
+    return null;
+  }
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-6">

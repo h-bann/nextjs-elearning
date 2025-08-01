@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import mySQL from "@/lib/database";
 import ModuleManager from "@/components/dashboard/course-creation/ModuleManager";
 import { getContent, getCourse, getLessons, getModules } from "@/lib/queries";
-import { getServerSession } from "@/lib/serverAuth";
 import PublishCourseButton from "@/components/dashboard/course-creation/PublishCourseButton";
+import { requireAuth } from "@/lib/auth-actions";
 
 async function getCourseAndModules(courseId) {
   const course = await mySQL(getCourse, [courseId]);
@@ -33,13 +33,13 @@ async function getCourseAndModules(courseId) {
 }
 
 export default async function CourseEditPage({ params }) {
-  const { courseId } = await params;
-  const user = await getServerSession();
+  const user = await requireAuth();
 
   if (!user) {
     redirect("/auth/signin?redirect=/dashboard");
     return null;
   }
+  const { courseId } = await params;
 
   const courseData = await getCourseAndModules(courseId);
 

@@ -3,7 +3,7 @@ import InstructorCourseList from "@/components/dashboard/courses/InstructorCours
 import mySQL from "@/lib/database";
 import { getEnrolledCourse, getInstructorCourse } from "@/lib/queries";
 import { redirect } from "next/navigation";
-import { getServerSession } from "@/lib/serverAuth";
+import { requireAuth } from "@/lib/auth-actions";
 
 async function getInstructorCourses(userId) {
   const courses = await mySQL(getInstructorCourse, [userId]);
@@ -16,7 +16,7 @@ async function getEnrolledCourses(userId) {
 }
 
 export default async function CoursesPage() {
-  const user = await getServerSession();
+  const user = await requireAuth();
   if (!user) {
     redirect("/auth/signin?redirect=/dashboard");
     return null;

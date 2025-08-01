@@ -1,12 +1,12 @@
 import ProfileForm from "@/components/dashboard/profile/ProfileForm";
 import ProfileHeader from "@/components/dashboard/profile/ProfileHeader";
 import SecuritySection from "@/components/dashboard/profile/SecuritySection";
-import { getServerSession } from "@/lib/serverAuth";
 import AccountDeletion from "@/components/dashboard/profile/AccountDeletion";
 import DataExport from "@/components/dashboard/profile/DataExport";
+import { requireAuth } from "@/lib/auth-actions";
 
 export default async function ProfilePage() {
-  const user = await getServerSession();
+  const user = await requireAuth();
 
   if (!user) {
     redirect("/auth/signin?redirect=/dashboard/profile");

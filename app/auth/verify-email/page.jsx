@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
-import { verifyEmail } from "@/lib/auth-actions";
+import { verifyEmail } from "@/lib/auth/auth-actions";
 
 export default function VerifyEmailPage() {
   const [status, setStatus] = useState("verifying"); // verifying, success, error

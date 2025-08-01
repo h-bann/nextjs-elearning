@@ -2,7 +2,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
-import { signOut } from "@/lib/auth-actions";
+import { signOut } from "@/lib/auth/auth-actions";
 import { useTransition } from "react";
 
 export default function SignOutButton() {

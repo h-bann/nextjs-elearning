@@ -1,7 +1,7 @@
-import mySQL from "@/lib/database";
-import { getAllCourses, getUserEnrollments } from "@/lib/queries";
-import CourseGrid from "@/components/courses/courseList/CourseGrid";
-import { requireAuth } from "@/lib/auth-actions";
+import mySQL from "@/lib/db/database";
+import { getAllCourses, getUserEnrollments } from "@/lib/db/queries";
+import CourseGrid from "@/app/courses/components/courseList/CourseGrid";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 async function getCoursesWithEnrollmentStatus(userId = null) {
   const courses = await mySQL(getAllCourses);

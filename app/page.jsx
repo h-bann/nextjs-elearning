@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Users, Clock } from "lucide-react";
-import FooterComponent from "@/components/layout/Footer";
+import FooterComponent from "components/layout/Footer";
 
 // Feature Box Component
 const FeatureBox = ({ icon: Icon, title, description }) => (

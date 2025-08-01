@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
-import { getLoggedInUser } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import { getLoggedInUser } from "@/lib/db/queries";
 import { uploadToS3 } from "@/lib/fileUpload";
 import sharp from "sharp";
 

@@ -1,5 +1,5 @@
-import CourseForm from "@/components/dashboard/course-creation/CourseForm";
-import { checkAuthStatus, requireAuth } from "@/lib/auth-actions";
+import CourseForm from "@/app/dashboard/components/course-creation/CourseForm";
+import { checkAuthStatus, requireAuth } from "@/lib/auth/auth-actions";
 
 export default async function CreateCoursePage() {
   const user = await requireAuth();

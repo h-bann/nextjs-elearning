@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import {
   addContent,
   checkInstructor,
@@ -8,7 +8,7 @@ import {
   deleteMediaContent,
   getLoggedInUser,
   updateContent,
-} from "@/lib/queries";
+} from "@/lib/db/queries";
 
 // ! ADD CONTENT TO EACH LESSON ROUTE
 export async function PUT(req, { params }) {

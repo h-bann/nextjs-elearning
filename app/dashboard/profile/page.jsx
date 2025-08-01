@@ -1,9 +1,9 @@
-import ProfileForm from "@/components/dashboard/profile/ProfileForm";
-import ProfileHeader from "@/components/dashboard/profile/ProfileHeader";
-import SecuritySection from "@/components/dashboard/profile/SecuritySection";
-import AccountDeletion from "@/components/dashboard/profile/AccountDeletion";
-import DataExport from "@/components/dashboard/profile/DataExport";
-import { requireAuth } from "@/lib/auth-actions";
+import ProfileForm from "@/app/dashboard/components/profile/ProfileForm";
+import ProfileHeader from "@/app/dashboard/components/profile/ProfileHeader";
+import SecuritySection from "@/app/dashboard/components/profile/SecuritySection";
+import AccountDeletion from "@/app/dashboard/components/profile/AccountDeletion";
+import DataExport from "@/app/dashboard/components/profile/DataExport";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 export default async function ProfilePage() {
   const user = await requireAuth();

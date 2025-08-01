@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import {
   checkInstructor,
   getLoggedInUser,
   publishCourse,
   unpublishCourse,
-} from "@/lib/queries";
+} from "@/lib/db/queries";
 
 // ! COURSE PUBLISHING ROUTE
 export async function PUT(req, { params }) {

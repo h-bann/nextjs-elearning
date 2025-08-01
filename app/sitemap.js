@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { url } from "@/app/config";
-import mySQL from "@/lib/database";
-import { getAvailableCoursesOnly } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import { getAvailableCoursesOnly } from "@/lib/db/queries";
 
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;

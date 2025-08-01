@@ -1,11 +1,11 @@
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import {
   getUserEnrollmentData,
   getUserPersonalInfo,
   getUserProgressData,
-} from "@/lib/queries";
+} from "@/lib/db/queries";
 import { generateUserDataPDF } from "@/lib/pdfGenerator";
-import { requireAuth } from "@/lib/auth-actions";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 export async function GET(req) {
   try {

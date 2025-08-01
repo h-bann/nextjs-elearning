@@ -1,8 +1,8 @@
 // components/dashboard/StudentDashboard.jsx
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import StatCard from "./StatsCard";
 import { BookOpen, Trophy } from "lucide-react";
-import { getLoggedInUser, getStudentStat } from "@/lib/queries";
+import { getLoggedInUser, getStudentStat } from "@/lib/db/queries";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import RecentActivity from "./RecentActivity";

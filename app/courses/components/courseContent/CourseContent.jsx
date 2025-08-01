@@ -1,7 +1,7 @@
 // components/courses/courseContent/CourseContent.jsx
 import CompleteLessonButton from "./CompleteLessonButton";
-import mySQL from "@/lib/database";
-import { getLessonCompletionStatus } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import { getLessonCompletionStatus } from "@/lib/db/queries";
 
 export default async function CourseContent({
   lesson,

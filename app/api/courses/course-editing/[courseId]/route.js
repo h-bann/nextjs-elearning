@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import {
   checkInstructor,
   getLoggedInUser,
   updateCourseWithImage,
   updateCourseWithoutImage,
-} from "@/lib/queries";
+} from "@/lib/db/queries";
 
 // Updated course editing route to handle PUT requests for updating course details
 export async function PUT(req, { params }) {

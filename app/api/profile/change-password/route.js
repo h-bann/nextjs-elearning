@@ -1,5 +1,5 @@
-import mySQL from "@/lib/database";
-import { getUserPassword, updateUserPassword } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import { getUserPassword, updateUserPassword } from "@/lib/db/queries";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -24,7 +24,7 @@ export async function POST(req) {
     if (!currentPassword || !newPassword) {
       return Response.json(
         { message: "Current and new password are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -38,13 +38,13 @@ export async function POST(req) {
     // Verify current password
     const isValidPassword = await bcrypt.compare(
       currentPassword,
-      users[0].password
+      users[0].password,
     );
 
     if (!isValidPassword) {
       return Response.json(
         { message: "Current password is incorrect" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,7 +52,7 @@ export async function POST(req) {
     if (newPassword.length < 6) {
       return Response.json(
         { message: "New password must be at least 6 characters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -64,7 +64,7 @@ export async function POST(req) {
 
     return Response.json(
       { message: "Password updated successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Password change error:", error);

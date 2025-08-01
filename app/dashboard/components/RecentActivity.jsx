@@ -1,7 +1,7 @@
 // components/dashboard/RecentActivity.jsx
 import { Calendar, BookOpen, CheckCircle } from "lucide-react";
-import mySQL from "@/lib/database";
-import { getUserRecentActivities } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import { getUserRecentActivities } from "@/lib/db/queries";
 
 // Simple helper for relative time
 function getRelativeTime(dateString) {

@@ -1,5 +1,5 @@
+import Navbar from "components/layout/Navbar";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
 
 export const metadata = {
   title: "E-learning app",

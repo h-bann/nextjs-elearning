@@ -1,9 +1,12 @@
-import { withAuth, withRole } from "@/lib/serverAuth";
-import mySQL from "@/lib/database";
-import { checkInstructor } from "@/lib/queries";
+import { requireRole, withRole } from "@/lib/auth/serverAuth";
+import mySQL from "@/lib/db/database";
+import { checkInstructor } from "@/lib/db/queries";
 import { uploadToS3 } from "@/lib/fileUpload";
 
 export const POST = withRole("instructor", async (req) => {
+  // ! NEED TO CHECK THIS
+  const authRole = requireRole("instructor");
+  console.log(authRole);
   try {
     const user = req.user;
 

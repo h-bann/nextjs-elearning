@@ -1,8 +1,12 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
-import mySQL from "@/lib/database";
-import { checkInstructor, getLoggedInUser, insertLessons } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import {
+  checkInstructor,
+  getLoggedInUser,
+  insertLessons,
+} from "@/lib/db/queries";
 
 // ! INSERT LESSONS ROUTE
 export async function POST(req, { params }) {

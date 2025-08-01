@@ -1,4 +1,4 @@
-import { withRole } from "@/lib/serverAuth";
+import { withRole } from "@/lib/auth/serverAuth";
 import { deleteFromS3 } from "@/lib/fileUpload";
 
 export const POST = withRole("instructor", async (req) => {

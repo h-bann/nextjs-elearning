@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import {
   checkInstructor,
   deleteModule,
   deleteModuleAndLessons,
   deleteMultipleLessons,
   getLoggedInUser,
-} from "@/lib/queries";
+} from "@/lib/db/queries";
 
 // ! DELETE MODULES ROUTE
 export async function DELETE(req, { params }) {

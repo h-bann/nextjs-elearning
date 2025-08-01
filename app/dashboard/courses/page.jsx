@@ -1,9 +1,8 @@
-import StudentCourseList from "@/components/dashboard/courses/StudentCourseList";
-import InstructorCourseList from "@/components/dashboard/courses/InstructorCourseList";
-import mySQL from "@/lib/database";
-import { getEnrolledCourse, getInstructorCourse } from "@/lib/queries";
-import { redirect } from "next/navigation";
-import { requireAuth } from "@/lib/auth-actions";
+import StudentCourseList from "@/app/dashboard/components/courses/StudentCourseList";
+import InstructorCourseList from "@/app/dashboard/components/courses/InstructorCourseList";
+import mySQL from "@/lib/db/database";
+import { getEnrolledCourse, getInstructorCourse } from "@/lib/db/queries";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 async function getInstructorCourses(userId) {
   const courses = await mySQL(getInstructorCourse, [userId]);
@@ -17,10 +16,6 @@ async function getEnrolledCourses(userId) {
 
 export default async function CoursesPage() {
   const user = await requireAuth();
-  if (!user) {
-    redirect("/auth/signin?redirect=/dashboard");
-    return null;
-  }
 
   if (user.role === "instructor") {
     const courses = await getInstructorCourses(user.id);

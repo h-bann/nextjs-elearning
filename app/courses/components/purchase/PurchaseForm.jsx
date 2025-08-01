@@ -1,9 +1,9 @@
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import { redirect } from "next/navigation";
-import { getCourse, checkExistingEnrollment } from "@/lib/queries";
-import PurchaseForm from "@/components/courses/purchase/PurchaseForm";
+import { getCourse, checkExistingEnrollment } from "@/lib/db/queries";
+import PurchaseForm from "@/app/courses/components/purchase/PurchaseForm";
 import VerificationRequired from "@/components/verification/VerificationRequired";
-import { requireAuth } from "@/lib/auth-actions";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 async function getCheckoutData(courseId, userId) {
   // Get course details

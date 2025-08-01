@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
-import { checkExistingEmails, updateUser } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import { checkExistingEmails, updateUser } from "@/lib/db/queries";
 
 export async function PUT(req) {
   try {
@@ -25,7 +25,7 @@ export async function PUT(req) {
     if (!username || !email) {
       return Response.json(
         { message: "Name and email are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function PUT(req) {
         { message: "Email already in use" },
         {
           status: 400,
-        }
+        },
       );
     }
 
@@ -52,7 +52,7 @@ export async function PUT(req) {
         message: "Profile updated successfully",
         user: { username, email },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Profile update error:", error);
@@ -60,7 +60,7 @@ export async function PUT(req) {
       { message: "Internal server error" },
       {
         status: 500,
-      }
+      },
     );
   }
 }

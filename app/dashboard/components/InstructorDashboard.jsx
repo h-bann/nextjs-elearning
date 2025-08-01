@@ -1,7 +1,7 @@
 import StatCard from "./StatsCard";
 import { BookOpen, Clock, Trophy, Users } from "lucide-react";
-import { getCourseStats, getInstructorStudentStats } from "@/lib/queries";
-import mySQL from "@/lib/database";
+import { getCourseStats, getInstructorStudentStats } from "@/lib/db/queries";
+import mySQL from "@/lib/db/database";
 
 async function getInstructorStats(userId) {
   const courseStats = await mySQL(getCourseStats, [userId]);
@@ -21,7 +21,6 @@ export default async function InstructorDashboard({ user }) {
   };
 
   stats = await getInstructorStats(user.id);
-
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">My Dashboard</h1>

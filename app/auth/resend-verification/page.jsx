@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
-import { resendVerification } from "@/lib/auth-actions";
+import { resendVerification } from "@/lib/auth/auth-actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
 

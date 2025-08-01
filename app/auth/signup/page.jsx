@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AlertCircle, CheckCircle } from "lucide-react";
-import { signUp } from "@/lib/auth-actions";
+import { signUp } from "@/lib/auth/auth-actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 

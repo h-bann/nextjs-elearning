@@ -1,11 +1,11 @@
 import React from "react";
 import { cookies } from "next/headers";
-import mySQL from "@/lib/database";
-import { getLoggedInUser } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import { getLoggedInUser } from "@/lib/db/queries";
 import { redirect } from "next/navigation";
 import jwt from "jsonwebtoken";
-import ResponsiveSidebar from "@/components/dashboard/ResponsiveSidebar";
-import { requireAuth } from "@/lib/auth-actions";
+import ResponsiveSidebar from "@/app/dashboard/components/ResponsiveSidebar";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 export default async function DashboardLayout({ children }) {
   const user = await requireAuth();

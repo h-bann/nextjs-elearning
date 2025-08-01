@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { requireAuth } from "@/lib/auth-actions";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 export default function CourseCard({ course }) {
   const [showDescription, setShowDescription] = useState(false);

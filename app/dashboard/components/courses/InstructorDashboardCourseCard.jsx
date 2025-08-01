@@ -1,4 +1,3 @@
-// components/dashboard/courses/InstructorDashboardCourseCard.jsx
 import { Users, FileEdit, Eye, Globe } from "lucide-react";
 
 export default function CourseCard({ course }) {

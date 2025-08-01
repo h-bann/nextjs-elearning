@@ -1,13 +1,13 @@
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import { redirect } from "next/navigation";
-import { checkInstructor, getLessonWithContent } from "@/lib/queries";
-import { getCourseAndModules } from "@/lib/utils";
-import CourseSidebar from "@/components/courses/courseContent/CourseSidebar";
-import MobileHeader from "@/components/courses/courseContent/MobileHeader";
+import { checkInstructor, getLessonWithContent } from "@/lib/db/queries";
+import CourseSidebar from "@/app/courses/components/courseContent/CourseSidebar";
+import MobileHeader from "@/app/courses/components/courseContent/MobileHeader";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
-import InstructorViewBanner from "@/components/courses/courseContent/InstructorViewBanner";
-import PreviewNavigation from "@/components/courses/courseContent/PreviewNavigation";
-import { requireAuth } from "@/lib/auth-actions";
+import InstructorViewBanner from "@/app/courses/components/courseContent/InstructorViewBanner";
+import PreviewNavigation from "@/app/courses/components/courseContent/PreviewNavigation";
+import { requireAuth } from "@/lib/auth/auth-actions";
+import { getCourseAndModules } from "@/lib/serverActions";
 
 // Function to transform the raw data
 function transformLessonData(rawLessonData) {

@@ -1,7 +1,11 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
-import { checkInstructor, getLoggedInUser, insertModules } from "@/lib/queries";
+import mySQL from "@/lib/db/database";
+import {
+  checkInstructor,
+  getLoggedInUser,
+  insertModules,
+} from "@/lib/db/queries";
 
 // ! ADD MODULES ROUTE
 export async function POST(req, { params }) {

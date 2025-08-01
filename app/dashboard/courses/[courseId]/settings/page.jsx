@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import mySQL from "@/lib/database";
-import { getCourse, checkInstructor } from "@/lib/queries";
-import CourseSettingsForm from "@/components/dashboard/course-creation/CourseSettingsForm";
-import PublishCourseButton from "@/components/dashboard/course-creation/PublishCourseButton";
-import { requireAuth } from "@/lib/auth-actions";
+import mySQL from "@/lib/db/database";
+import { getCourse, checkInstructor } from "@/lib/db/queries";
+import CourseSettingsForm from "@/app/dashboard/components/course-creation/CourseSettingsForm";
+import PublishCourseButton from "@/app/dashboard/components/course-creation/PublishCourseButton";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 export default async function CourseSettingsPage({ params }) {
   const user = await requireAuth();

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Menu, LogIn, LogOut } from "lucide-react";
 import ClientSideMenu from "./ClientSideMenu";
 import SignOutButton from "./SignOutButton"; // We'll create this
-import { requireAuth } from "@/lib/auth-actions";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 export default async function Navbar() {
   const user = await requireAuth();

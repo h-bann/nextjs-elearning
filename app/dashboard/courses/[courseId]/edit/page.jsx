@@ -1,36 +1,15 @@
 import { redirect } from "next/navigation";
-import mySQL from "@/lib/database";
-import ModuleManager from "@/components/dashboard/course-creation/ModuleManager";
-import { getContent, getCourse, getLessons, getModules } from "@/lib/queries";
-import PublishCourseButton from "@/components/dashboard/course-creation/PublishCourseButton";
-import { requireAuth } from "@/lib/auth-actions";
-
-async function getCourseAndModules(courseId) {
-  const course = await mySQL(getCourse, [courseId]);
-
-  const modules = await mySQL(getModules, [courseId]);
-  const modulesWithLessons = await Promise.all(
-    modules.map(async (module) => {
-      const lessons = await mySQL(getLessons, [module.id]);
-      const lessonsWithContent = await Promise.all(
-        lessons.map(async (lesson) => {
-          const content = await mySQL(getContent, [lesson.id]);
-
-          return {
-            ...lesson,
-            content: content,
-          };
-        }),
-      );
-
-      return { ...module, lessons: lessonsWithContent };
-    }),
-  );
-  return {
-    ...course[0],
-    modules: modulesWithLessons,
-  };
-}
+import mySQL from "@/lib/db/database";
+import ModuleManager from "@/app/dashboard/components/course-creation/ModuleManager";
+import {
+  getContent,
+  getCourse,
+  getLessons,
+  getModules,
+} from "@/lib/db/queries";
+import PublishCourseButton from "@/app/dashboard/components/course-creation/PublishCourseButton";
+import { requireAuth } from "@/lib/auth/auth-actions";
+import { getCourseAndModules } from "@/lib/serverActions";
 
 export default async function CourseEditPage({ params }) {
   const user = await requireAuth();

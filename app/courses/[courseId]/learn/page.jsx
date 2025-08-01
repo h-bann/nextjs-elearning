@@ -1,17 +1,17 @@
-import mySQL from "@/lib/database";
+import mySQL from "@/lib/db/database";
 import { redirect } from "next/navigation";
 import {
   checkExistingEnrollment,
   checkInstructor,
   getContent,
-} from "@/lib/queries";
-import { getCourseAndModules } from "@/lib/utils";
-import CourseSidebar from "@/components/courses/courseContent/CourseSidebar";
-import CourseContent from "@/components/courses/courseContent/CourseContent";
-import MobileHeader from "@/components/courses/courseContent/MobileHeader";
+} from "@/lib/db/queries";
+import { getCourseAndModules } from "@/lib/serverActions";
+import CourseSidebar from "@/app/courses/components/courseContent/CourseSidebar";
+import CourseContent from "@/app/courses/components/courseContent/CourseContent";
+import MobileHeader from "@/app/courses/components/courseContent/MobileHeader";
 import { getCompletedLessons, canAccessLesson } from "@/lib/serverActions";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
-import InstructorViewBanner from "@/components/courses/courseContent/InstructorViewBanner";
+import InstructorViewBanner from "@/app/courses/components/courseContent/InstructorViewBanner";
 
 // This forces the page to be dynamic and not cached
 export const dynamic = "force-dynamic";

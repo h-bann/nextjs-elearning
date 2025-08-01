@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import mySQL from "@/lib/database";
-import { getLoggedInUser, insertCourse } from "@/lib/queries";
-import { checkAuthStatus } from "@/lib/auth-actions";
+import mySQL from "@/lib/db/database";
+import { getLoggedInUser, insertCourse } from "@/lib/db/queries";
+import { checkAuthStatus } from "@/lib/auth/auth-actions";
 
 // ! OVERALL COURSE CREATION ROUTE
 export async function POST(req) {

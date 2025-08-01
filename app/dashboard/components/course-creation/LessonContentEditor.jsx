@@ -1,4 +1,3 @@
-// components/dashboard/course-creation/LessonContentEditor.jsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";

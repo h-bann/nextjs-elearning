@@ -45,7 +45,6 @@ export default async function CoursePreviewPage({ params, searchParams }) {
   const { courseId } = await params;
   const { moduleId, lessonId } = await searchParams;
   const user = await requireAuth();
-  console.log(user);
   if (!user) {
     redirect("/auth/signin?redirect=/dashboard");
     return null;

@@ -1,20 +1,17 @@
-// components/layout/Navbar.jsx
 import Link from "next/link";
 import { Menu, LogIn, LogOut } from "lucide-react";
 import ClientSideMenu from "./ClientSideMenu";
 import SignOutButton from "./SignOutButton"; // We'll create this
-import { requireAuth } from "@/lib/auth/auth-actions";
+import { getServerSession } from "@/lib/auth/auth-actions";
 
 export default async function Navbar() {
-  const user = await requireAuth();
-
+  const user = await getServerSession();
   const menuItems = [
     { label: "Home", href: "/" },
     { label: "Courses", href: "/courses" },
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ];
-
   // If user is logged in, add dashboard to menu items
   if (user) {
     menuItems.push({ label: "Dashboard", href: "/dashboard" });

@@ -3,11 +3,12 @@ import { NextResponse } from "next/server";
 export function middleware(request) {
   // Get the response (either from the next middleware or created here)
   const response = NextResponse.next();
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   // Define your CSP directives
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+    script-src 'self' 'unsafe-inline' ${isDevelopment ? "'unsafe-eval'" : ""};
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com;
     img-src 'self' data: https://${process.env.DO_SPACES_NAME}.${process.env.DO_SPACES_REGION}.digitaloceanspaces.com;
     media-src 'self' data: https://${process.env.DO_SPACES_NAME}.${process.env.DO_SPACES_REGION}.digitaloceanspaces.com;

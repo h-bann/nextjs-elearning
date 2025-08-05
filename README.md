@@ -12,6 +12,24 @@ A full-stack e-learning platform built with Next.js, featuring course management
 - **Responsive Design**: Mobile-friendly interface
 - **File Storage**: Integration with Digital Ocean Spaces for media storage
 
+<div>
+    <a href="https://www.loom.com/share/6073b5c980394f618dd0d912029fdf48">
+      <p>User Sign Up - Watch Video</p>
+    </a>
+    <a href="https://www.loom.com/share/6073b5c980394f618dd0d912029fdf48">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6073b5c980394f618dd0d912029fdf48-86650fe06e2ff2e5-full-play.gif">
+    </a>
+  </div>
+
+<div>
+    <a href="https://www.loom.com/share/380781a9e9b3406394dbe5b6a3d2d196">
+      <p>Course Creation and Edit - Watch Video</p>
+    </a>
+    <a href="https://www.loom.com/share/380781a9e9b3406394dbe5b6a3d2d196">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/380781a9e9b3406394dbe5b6a3d2d196-68985fb38f540618-full-play.gif">
+    </a>
+  </div>
+
 ## Tech Stack
 
 - **Frontend**: Next.js 15, React 19, Tailwind CSS

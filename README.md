@@ -58,7 +58,7 @@ Before running this project, you will need:
    npm install
 
 4. **Set up environment variables**
-   Creat .env.local file using .env.example as a guide
+   Create .env.local file using .env.example as a guide.
 
 5. **Set up the database**
 

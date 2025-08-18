@@ -1,5 +1,8 @@
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
 import mySQL from "@/lib/db/database";
 import {
+  getLoggedInUser,
   getCourseWithStripe,
   checkExistingEnrollment,
   createEnrollmentWithPayment,
@@ -19,7 +22,6 @@ export async function POST(req) {
         { status: 400 },
       );
     }
-
     // Get request data
     const { courseId } = await req.json();
 
@@ -29,6 +31,8 @@ export async function POST(req) {
         { status: 400 },
       );
     }
+
+    console.log("📚 Course ID:", courseId);
 
     // Get course data
     const courseData = await mySQL(getCourseWithStripe, [courseId]);
@@ -44,6 +48,7 @@ export async function POST(req) {
         { status: 400 },
       );
     }
+
     if (!course.stripe_price_id) {
       return Response.json(
         {
@@ -53,6 +58,8 @@ export async function POST(req) {
         { status: 400 },
       );
     }
+
+    console.log("💰 Course price ID:", course.stripe_price_id);
 
     // Check if user already owns this course
     const existingEnrollment = await mySQL(checkExistingEnrollment, [
@@ -82,6 +89,7 @@ export async function POST(req) {
     }
 
     // Create checkout session
+    console.log("🔄 Creating Stripe checkout session...");
     const session = await createCheckoutSession({
       priceId: course.stripe_price_id,
       courseId: courseId,
@@ -89,21 +97,32 @@ export async function POST(req) {
       successUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/courses/${courseId}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/courses/${courseId}/purchase?cancelled=true`,
     });
-    // Create pending enrollment record
+    console.log("SESSION", session);
+    console.log("✅ Checkout session created:", session.id);
+    console.log("💳 Payment intent ID:", session.payment_intent);
+
+    // Create pending enrollment record with the payment intent ID
+    console.log("💾 Creating enrollment record...");
     await mySQL(createEnrollmentWithPayment, [
       user.id,
       courseId,
       course.price,
       "PAYMENT_PENDING",
-      session.payment_intent,
+      session.payment_intent, // This is the key fix!
     ]);
+
+    console.log(
+      "✅ Enrollment created with payment intent:",
+      session.payment_intent,
+    );
 
     return Response.json({
       sessionId: session.id,
       checkoutUrl: session.url,
     });
   } catch (error) {
-    console.error("Stripe checkout error:", error);
+    console.error("❌ Stripe checkout error:", error);
+    console.error("📋 Error stack:", error.stack);
     return Response.json(
       {
         message: "Failed to create checkout session",

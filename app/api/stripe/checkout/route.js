@@ -5,23 +5,28 @@ import {
   getLoggedInUser,
   getCourseWithStripe,
   checkExistingEnrollment,
-  createEnrollmentWithPayment,
+  createPendingEnrollment,
 } from "@/lib/db/queries";
 import { createCheckoutSession } from "@/lib/stripe/stripe";
-import { requireAuth } from "@/lib/auth/auth-actions";
 
 export async function POST(req) {
   try {
     // Verify authentication
-    const user = await requireAuth();
-    if (!user) {
-      return NextResponse.json(
-        {
-          error: "Not authenticated",
-        },
-        { status: 400 },
-      );
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
+
+    if (!token) {
+      return Response.json({ message: "Unauthorized" }, { status: 401 });
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const users = await mySQL(getLoggedInUser, [decoded.userId]);
+    const user = users[0];
+
+    if (!user) {
+      return Response.json({ message: "User not found" }, { status: 404 });
+    }
+
     // Get request data
     const { courseId } = await req.json();
 
@@ -31,8 +36,6 @@ export async function POST(req) {
         { status: 400 },
       );
     }
-
-    console.log("📚 Course ID:", courseId);
 
     // Get course data
     const courseData = await mySQL(getCourseWithStripe, [courseId]);
@@ -58,8 +61,6 @@ export async function POST(req) {
         { status: 400 },
       );
     }
-
-    console.log("💰 Course price ID:", course.stripe_price_id);
 
     // Check if user already owns this course
     const existingEnrollment = await mySQL(checkExistingEnrollment, [
@@ -89,7 +90,7 @@ export async function POST(req) {
     }
 
     // Create checkout session
-    console.log("🔄 Creating Stripe checkout session...");
+
     const session = await createCheckoutSession({
       priceId: course.stripe_price_id,
       courseId: courseId,
@@ -97,24 +98,9 @@ export async function POST(req) {
       successUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/courses/${courseId}/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/courses/${courseId}/purchase?cancelled=true`,
     });
-    console.log("SESSION", session);
-    console.log("✅ Checkout session created:", session.id);
-    console.log("💳 Payment intent ID:", session.payment_intent);
 
-    // Create pending enrollment record with the payment intent ID
-    console.log("💾 Creating enrollment record...");
-    await mySQL(createEnrollmentWithPayment, [
-      user.id,
-      courseId,
-      course.price,
-      "PAYMENT_PENDING",
-      session.payment_intent, // This is the key fix!
-    ]);
-
-    console.log(
-      "✅ Enrollment created with payment intent:",
-      session.payment_intent,
-    );
+    // Create pending enrollment record using abstracted query
+    await mySQL(createPendingEnrollment, [user.id, courseId, course.price]);
 
     return Response.json({
       sessionId: session.id,

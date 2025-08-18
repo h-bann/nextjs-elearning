@@ -49,14 +49,13 @@ export default function PurchaseForm({ course, userId, userRole }) {
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Course
       </button>
-
       {/* Course Preview */}
       <div className="mb-8 overflow-hidden rounded-lg bg-white shadow-lg">
-        <div className="aspect-video relative">
+        <div className="relative">
           <img
             src={course.image_url || "/api/placeholder/400/300"}
             alt={course.title}
-            className="h-full w-full object-cover"
+            className="h-48 w-full object-cover md:h-40 lg:h-52"
           />
         </div>
         <div className="p-6">

@@ -44,21 +44,9 @@ export default function CourseCard({ course }) {
         />
 
         {/* Status Badge */}
-        {course.isEnrolled ? (
+        {course.isEnrolled && (
           <div className="absolute right-2 top-2 rounded-full bg-green-500 px-3 py-1 text-sm font-medium text-white shadow-md">
-            Owned
-          </div>
-        ) : (
-          <div className="absolute right-2 top-2 rounded-full bg-blue-500 px-3 py-1 text-sm font-medium text-white shadow-md">
-            For Sale
-          </div>
-        )}
-
-        {/* Enrollment Count */}
-        {course.enrollment_count > 0 && (
-          <div className="absolute bottom-2 left-2 rounded-full bg-black bg-opacity-60 px-2 py-1 text-xs text-white">
-            {course.enrollment_count} student
-            {course.enrollment_count !== 1 ? "s" : ""}
+            Enrolled
           </div>
         )}
       </div>
@@ -105,11 +93,7 @@ export default function CourseCard({ course }) {
         <div className="space-y-2">
           <button
             onClick={handleCourseClick}
-            className={`w-full transform rounded-md px-4 py-2 font-medium transition-colors ${
-              course.isEnrolled
-                ? "flex items-center justify-center bg-green-500 text-white hover:bg-green-600"
-                : "flex items-center justify-center bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+            className={`flex w-full transform items-center justify-center rounded-md bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700`}
           >
             {course.isEnrolled ? (
               <>
@@ -123,24 +107,7 @@ export default function CourseCard({ course }) {
               </>
             )}
           </button>
-
-          {/* Preview button for non-enrolled users */}
-          {!course.isEnrolled && (
-            <button
-              onClick={handlePreview}
-              className="w-full rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-            >
-              Preview
-            </button>
-          )}
         </div>
-
-        {/* Secure Payment Notice */}
-        {!course.isEnrolled && (
-          <p className="mt-3 text-center text-xs text-gray-500">
-            Secure payment with Stripe
-          </p>
-        )}
       </div>
     </div>
   );

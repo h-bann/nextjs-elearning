@@ -1,17 +1,18 @@
 import { headers } from "next/headers";
 import { stripe } from "@/lib/stripe/stripe";
 import mySQL from "@/lib/db/database";
+import {
+  findPendingEnrollmentByUserAndCourse,
+  activateEnrollmentWithPayment,
+  markEnrollmentAsFailed,
+  getEnrollmentById,
+} from "@/lib/db/queries";
 
 export async function POST(req) {
-  console.log("🔔 Webhook received");
-
   try {
     const body = await req.text();
     const headersList = await headers();
     const signature = headersList.get("stripe-signature");
-
-    console.log("📝 Webhook body length:", body.length);
-    console.log("🔐 Signature present:", !!signature);
 
     if (!signature) {
       console.error("❌ No Stripe signature found");
@@ -26,9 +27,6 @@ export async function POST(req) {
         signature,
         process.env.STRIPE_WEBHOOK_SECRET,
       );
-      console.log("✅ Webhook signature verified");
-      console.log("📋 Event type:", event.type);
-      console.log("🆔 Event ID:", event.id);
     } catch (err) {
       console.error("❌ Webhook signature verification failed:", err.message);
       return new Response(`Webhook Error: ${err.message}`, { status: 400 });
@@ -38,36 +36,23 @@ export async function POST(req) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
-        console.log("🛒 Checkout session completed:", session.id);
-        console.log("💰 Payment status:", session.payment_status);
-        console.log("🆔 Payment intent:", session.payment_intent);
-        console.log("📋 Session metadata:", session.metadata);
 
         // Only process if payment was successful
         if (session.payment_status === "paid") {
           try {
             const { userId, courseId } = session.metadata;
-            console.log("👤 User ID from metadata:", userId);
-            console.log("📚 Course ID from metadata:", courseId);
 
             if (!userId || !courseId) {
               console.error("❌ Missing metadata in session");
               break;
             }
 
-            // Find enrollment by user and course (instead of payment intent)
-            console.log(
-              "🔍 Looking for enrollment for user",
-              userId,
-              "and course",
-              courseId,
-            );
+            // Find enrollment by user and course using abstracted query
+
             const enrollments = await mySQL(
-              `SELECT * FROM enrollments WHERE user_id = ? AND course_id = ? AND status = 'PAYMENT_PENDING' ORDER BY enrolled_at DESC LIMIT 1`,
+              findPendingEnrollmentByUserAndCourse,
               [parseInt(userId), parseInt(courseId)],
             );
-
-            console.log("📊 Found enrollments:", enrollments.length);
 
             if (enrollments.length === 0) {
               console.error(
@@ -80,34 +65,18 @@ export async function POST(req) {
             }
 
             const enrollment = enrollments[0];
-            console.log("📋 Processing enrollment:", {
-              id: enrollment.id,
-              user_id: enrollment.user_id,
-              course_id: enrollment.course_id,
-              current_status: enrollment.status,
-            });
 
-            // Update enrollment status to ACTIVE and store payment intent
-            console.log("🔄 Updating enrollment status to ACTIVE...");
-            const updateResult = await mySQL(
-              `UPDATE enrollments SET status = 'ACTIVE', stripe_payment_intent_id = ? WHERE id = ?`,
-              [session.payment_intent, enrollment.id],
-            );
+            // Update enrollment status to ACTIVE with payment intent and payment date
 
-            console.log("✅ Update result:", updateResult);
-            console.log(
-              `🎉 Enrollment activated for user ${enrollment.user_id}, course ${enrollment.course_id}`,
-            );
+            const updateResult = await mySQL(activateEnrollmentWithPayment, [
+              session.payment_intent,
+              enrollment.id,
+            ]);
 
-            // Verify the update worked
-            const verifyEnrollments = await mySQL(
-              `SELECT * FROM enrollments WHERE id = ?`,
-              [enrollment.id],
-            );
-            console.log(
-              "🔍 Verification - enrollment status after update:",
-              verifyEnrollments[0]?.status,
-            );
+            // Verify the update worked using abstracted query
+            const verifyEnrollments = await mySQL(getEnrollmentById, [
+              enrollment.id,
+            ]);
           } catch (error) {
             console.error("❌ Error processing checkout completion:", error);
             console.error("📋 Error details:", error.stack);
@@ -123,8 +92,6 @@ export async function POST(req) {
 
       case "payment_intent.succeeded": {
         const paymentIntent = event.data.object;
-        console.log("💰 Payment intent succeeded:", paymentIntent.id);
-        console.log("📋 Payment metadata:", paymentIntent.metadata);
 
         // This is a backup - the checkout.session.completed should handle it
         console.log(
@@ -142,26 +109,21 @@ export async function POST(req) {
         );
 
         try {
-          // Find enrollment by metadata
+          // Find enrollment by metadata and mark as failed
           const { userId, courseId } = paymentIntent.metadata;
           if (userId && courseId) {
-            await mySQL(
-              `UPDATE enrollments SET status = 'FAILED' WHERE user_id = ? AND course_id = ? AND status = 'PAYMENT_PENDING'`,
-              [parseInt(userId), parseInt(courseId)],
-            );
-            console.log("🔄 Enrollment status updated to FAILED");
+            await mySQL(markEnrollmentAsFailed, [
+              parseInt(userId),
+              parseInt(courseId),
+            ]);
           }
         } catch (error) {
           console.error("❌ Error processing failed payment:", error);
         }
         break;
       }
-
-      default:
-        console.log(`ℹ️ Unhandled event type: ${event.type}`);
     }
 
-    console.log("✅ Webhook processed successfully");
     return new Response("Webhook processed", { status: 200 });
   } catch (error) {
     console.error("💥 Webhook processing error:", error);

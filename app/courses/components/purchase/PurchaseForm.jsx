@@ -1,145 +1,131 @@
-import mySQL from "@/lib/db/database";
-import { redirect } from "next/navigation";
-import { getCourse, checkExistingEnrollment } from "@/lib/db/queries";
-import PurchaseForm from "@/app/courses/components/purchase/PurchaseForm";
-import VerificationRequired from "@/components/verification/VerificationRequired";
-import { requireAuth } from "@/lib/auth/auth-actions";
+"use client";
 
-async function getCheckoutData(courseId, userId) {
-  // Get course details
-  const courses = await mySQL(getCourse, [courseId]);
-  if (!courses.length) {
-    return null;
-  }
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2, CreditCard, Shield, ArrowLeft } from "lucide-react";
 
-  // Check if already purchased
-  const purchases = await mySQL(checkExistingEnrollment, [userId, courseId]);
-  if (purchases.length) {
-    return { alreadyPurchased: true };
-  }
+export default function PurchaseForm({ course, userId, userRole }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  // Check OneId verification status and user role
-  const verificationData = await mySQL(
-    `SELECT oneid_verified, oneid_verification_date, role 
-     FROM users 
-     WHERE id = ?`,
-    [userId],
-  );
+  const handlePurchase = async () => {
+    setLoading(true);
+    setError("");
 
-  const userData = verificationData[0];
-  const isVerified = userData && userData.oneid_verified;
-  const userRole = userData ? userData.role : null;
+    try {
+      // Create Stripe checkout session
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId: course.id,
+        }),
+      });
 
-  return {
-    course: courses[0],
-    alreadyPurchased: false,
-    isVerified: isVerified,
-    verificationDate: userData?.oneid_verification_date,
-    userRole: userRole,
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create checkout session");
+      }
+
+      // Redirect to Stripe checkout
+      window.location.href = data.checkoutUrl;
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
   };
-}
 
-export default async function PurchasePage({ params }) {
-  const { courseId } = await params;
-  const user = await requireAuth();
-
-  if (!user) {
-    redirect("/auth/signup?redirect=/dashboard");
-    return null;
-  }
-
-  const checkoutData = await getCheckoutData(courseId, user.id);
-
-  if (!checkoutData) {
-    redirect("/courses");
-  }
-
-  if (checkoutData.alreadyPurchased) {
-    redirect(`/dashboard`);
-  }
-
-  // If user is not verified AND not an instructor, show verification requirement
-  if (!checkoutData.isVerified && checkoutData.userRole !== "instructor") {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <VerificationRequired
-          course={checkoutData.course}
-          courseId={courseId}
-        />
-      </div>
-    );
-  }
-
-  // User is verified OR is an instructor, show purchase form
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Purchase Course</h1>
+    <div className="mx-auto max-w-2xl">
+      {/* Back button */}
+      <button
+        onClick={() => router.back()}
+        className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back to Course
+      </button>
 
-      {/* Show verification status only for non-instructors */}
-      {checkoutData.userRole !== "instructor" && (
-        <div className="mb-6 rounded-md border border-green-200 bg-green-50 p-4">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-green-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
+      {/* Course Preview */}
+      <div className="mb-8 overflow-hidden rounded-lg bg-white shadow-lg">
+        <div className="aspect-video relative">
+          <img
+            src={course.image_url || "/api/placeholder/400/300"}
+            alt={course.title}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="p-6">
+          <h1 className="mb-2 text-2xl font-bold">{course.title}</h1>
+          <p className="mb-4 text-gray-600">{course.description}</p>
+
+          {/* Course Features */}
+          <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="flex items-center text-sm text-gray-600">
+              <Shield className="mr-2 h-4 w-4 text-green-500" />
+              Lifetime access
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">
-                Age Verified
-              </h3>
-              <div className="mt-1 text-sm text-green-700">
-                Your age has been verified with OneId. You can now purchase
-                courses.
-              </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <CreditCard className="mr-2 h-4 w-4 text-blue-500" />
+              Secure payment with Stripe
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Show instructor notice */}
-      {checkoutData.userRole === "instructor" && (
-        <div className="mb-6 rounded-md border border-blue-200 bg-blue-50 p-4">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-blue-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
+          {/* Price and Purchase */}
+          <div className="border-t pt-6">
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-sm text-gray-600">Total:</span>
+              <span className="text-3xl font-bold text-gray-900">
+                £{parseFloat(course.price).toFixed(2)}
+              </span>
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
-                Instructor Account
-              </h3>
-              <div className="mt-1 text-sm text-blue-700">
-                As an instructor, you can purchase courses without age
-                verification.
+
+            {error && (
+              <div className="mb-4 rounded-md bg-red-50 p-4 text-red-600">
+                {error}
               </div>
-            </div>
+            )}
+
+            <button
+              onClick={handlePurchase}
+              disabled={loading}
+              className="flex w-full items-center justify-center rounded-md bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <CreditCard className="mr-2 h-5 w-5" />
+                  Purchase Course
+                </>
+              )}
+            </button>
+
+            <p className="mt-4 text-center text-sm text-gray-500">
+              Secure checkout powered by Stripe. You will be redirected to
+              complete your payment.
+            </p>
           </div>
         </div>
-      )}
+      </div>
 
-      <PurchaseForm
-        course={checkoutData.course}
-        userId={user.id}
-        userRole={checkoutData.userRole}
-      />
+      {/* Additional Information */}
+      <div className="rounded-lg bg-blue-50 p-4">
+        <h3 className="mb-2 font-medium text-blue-900">What you'll get:</h3>
+        <ul className="space-y-1 text-sm text-blue-800">
+          <li>• Instant access to all course content</li>
+          <li>• Progress tracking and completion certificates</li>
+          <li>• Mobile and desktop access</li>
+          <li>• 30-day money-back guarantee</li>
+        </ul>
+      </div>
     </div>
   );
 }

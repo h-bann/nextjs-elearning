@@ -1,9 +1,7 @@
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import mySQL from "@/lib/db/database";
 import {
   checkInstructor,
-  getLoggedInUser,
+  getCourseWithStripe,
   updateCourseWithImage,
   updateCourseWithoutImage,
 } from "@/lib/db/queries";
@@ -14,16 +12,15 @@ export async function PUT(req, { params }) {
 
   try {
     // Verify authentication
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth_token")?.value;
-
-    if (!token) {
-      return Response.json({ message: "Unauthorized" }, { status: 401 });
+    const user = await requireAuth();
+    if (!user) {
+      return NextResponse.json(
+        {
+          error: "Not authenticated",
+        },
+        { status: 400 },
+      );
     }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const users = await mySQL(getLoggedInUser, [decoded.userId]);
-    const user = users[0];
 
     // Verify course ownership
     const courses = await mySQL(checkInstructor, [courseId]);
@@ -43,11 +40,21 @@ export async function PUT(req, { params }) {
       );
     }
 
+    // Validate price
+    const coursePrice = parseFloat(price);
+    if (isNaN(coursePrice) || coursePrice <= 0) {
+      return Response.json({ message: "Invalid price" }, { status: 400 });
+    }
+
+    // Get current course data including Stripe IDs
+    const currentCourseData = await mySQL(getCourseWithStripe, [courseId]);
+    const currentCourse = currentCourseData[0];
+
     if (imageUrl) {
       await mySQL(updateCourseWithImage, [
         title,
         description,
-        price,
+        coursePrice,
         imageUrl,
         courseId,
         user.id,
@@ -56,10 +63,42 @@ export async function PUT(req, { params }) {
       await mySQL(updateCourseWithoutImage, [
         title,
         description,
-        price,
+        coursePrice,
         courseId,
         user.id,
       ]);
+    }
+
+    // Update Stripe product if it exists
+    if (currentCourse.stripe_product_id) {
+      try {
+        const stripeUpdateResult = await updateStripeProduct(
+          currentCourse.stripe_product_id,
+          {
+            id: courseId,
+            title,
+            description,
+            price: coursePrice,
+            image_url: imageUrl || currentCourse.image_url,
+          },
+        );
+
+        // Update price ID if it changed
+        if (stripeUpdateResult.priceId !== currentCourse.stripe_price_id) {
+          await mySQL(updateCourseStripePrice, [
+            stripeUpdateResult.priceId,
+            courseId,
+            user.id,
+          ]);
+        }
+
+        console.log(
+          `Course ${courseId} and Stripe product updated successfully`,
+        );
+      } catch (stripeError) {
+        console.error("Stripe update failed:", stripeError);
+        // Continue execution - database update succeeded
+      }
     }
 
     return Response.json(
@@ -69,7 +108,7 @@ export async function PUT(req, { params }) {
           id: courseId,
           title,
           description,
-          price,
+          price: coursePrice,
           image_url: imageUrl,
         },
       },

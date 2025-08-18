@@ -12,6 +12,7 @@ import MobileHeader from "@/app/courses/components/courseContent/MobileHeader";
 import { getCompletedLessons, canAccessLesson } from "@/lib/serverActions";
 import { CourseProgressProvider } from "@/lib/courseProgressContext";
 import InstructorViewBanner from "@/app/courses/components/courseContent/InstructorViewBanner";
+import { requireAuth } from "@/lib/auth/auth-actions";
 
 // This forces the page to be dynamic and not cached
 export const dynamic = "force-dynamic";

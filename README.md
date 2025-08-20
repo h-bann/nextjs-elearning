@@ -30,6 +30,15 @@ A full-stack e-learning platform built with Next.js, featuring course management
     </a>
   </div>
 
+<div>
+    <a href="https://www.loom.com/share/5f5dd99404a14492ba0c0558454edb49">
+      <p>Course purchase and enrollment</p>
+    </a>
+    <a href="https://www.loom.com/share/5f5dd99404a14492ba0c0558454edb49">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/5f5dd99404a14492ba0c0558454edb49-3d90d99b2db6b08b-full-play.gif">
+    </a>
+  </div>
+
 ## Tech Stack
 
 - **Frontend**: Next.js 15, React 19, Tailwind CSS
